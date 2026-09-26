@@ -37,3 +37,11 @@ This public log records material assistance, decisions, corrections, and verific
 - Corrections: fixed an informational unused-day expectation; explicitly marked the new cancellation graph as added; narrowed duplicate-key conflict handling to the named cancellation index after the deterministic race exposed SQL command ordering.
 - Verification: 24 domain and 16 API/integration tests passed in Release against SQL Server in Docker, including two-connection concurrency and injected later-write rollback.
 - Review decision: pending repository-owner review; PR 4 remains stacked on PR 3.
+
+## PR 5 — renewal
+
+- Task: implement renewal windows, successor history, conditional payments, predecessor integrity, and remaining lifecycle races.
+- Assistance: wrote the domain contract before implementation, added the domain/EF/API slice, and extended deterministic SQL race/rollback verification.
+- Decisions preserved: the window has 31 inclusive dates; manual renewal can be unpaid; claims reset only on the successor; a cancelled successor is retained and never replaced.
+- Verification: 34 domain and 26 API/SQL integration tests passed in Release against SQL Server in Docker, exercising Card/DirectDebit/manual paths, invalid no-write cases, aggregate races, and injected later-write rollback.
+- Review decision: pending repository-owner review; PR 5 remains stacked on PR 4.

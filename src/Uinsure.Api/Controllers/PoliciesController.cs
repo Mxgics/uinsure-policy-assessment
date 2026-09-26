@@ -75,4 +75,24 @@ public sealed class PoliciesController(PolicyService policyService) : Controller
             ? NotFound()
             : CreatedAtAction(nameof(GetTerm), new { reference, termId }, cancellation);
     }
+
+    [HttpPost("{reference}/terms/{termId:guid}/renewals")]
+    [ProducesResponseType<PolicyTermResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<PolicyTermResponse>> Renew(
+        string reference,
+        Guid termId,
+        RenewPolicyRequest request,
+        CancellationToken cancellationToken)
+    {
+        var successor = await policyService.RenewAsync(reference, termId, request, cancellationToken);
+        return successor is null
+            ? NotFound()
+            : CreatedAtAction(
+                nameof(GetTerm),
+                new { reference, termId = successor.Id },
+                successor);
+    }
 }

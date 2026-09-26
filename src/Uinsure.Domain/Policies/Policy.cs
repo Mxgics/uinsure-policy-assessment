@@ -41,9 +41,54 @@ public sealed class Policy
     {
         var term = _terms.SingleOrDefault(item => item.Id == termId)
             ?? throw new InvalidOperationException("The term does not belong to this policy.");
+        if (_terms.Any(item => item.PredecessorTermId == termId && item.Cancellation is null))
+        {
+            throw new DomainConflictException("A policy term with an active successor cannot be cancelled.");
+        }
         var cancellation = term.Cancel(date, recordedAtUtc);
         MutationRevision++;
         return cancellation;
+    }
+
+    public PolicyTerm Renew(
+        Guid termId,
+        DateOnly today,
+        PaymentMethod? paymentMethod,
+        DateTimeOffset recordedAtUtc)
+    {
+        var term = _terms.SingleOrDefault(item => item.Id == termId)
+            ?? throw new InvalidOperationException("The term does not belong to this policy.");
+        if (term.Cancellation is not null)
+        {
+            throw new DomainConflictException("A cancelled policy term cannot be renewed.");
+        }
+        if (today < term.EndDate.AddDays(-30) || today > term.EndDate)
+        {
+            throw new DomainConflictException("The policy term is outside its renewal window.");
+        }
+        if (_terms.Any(item => item.PredecessorTermId == termId))
+        {
+            throw new DomainConflictException("The policy term has already been renewed.");
+        }
+
+        var errors = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
+        if (term.AutoRenew && paymentMethod is not (PaymentMethod.Card or PaymentMethod.DirectDebit))
+        {
+            errors["paymentMethod"] = ["Automatic renewal requires Card or DirectDebit."];
+        }
+        if (!term.AutoRenew && paymentMethod is not null)
+        {
+            errors["paymentMethod"] = ["Manual renewal must not include a payment method."];
+        }
+        if (errors.Count > 0)
+        {
+            throw new DomainValidationException(errors);
+        }
+
+        var successor = PolicyTerm.CreateRenewal(Id, term, paymentMethod, recordedAtUtc);
+        _terms.Add(successor);
+        MutationRevision++;
+        return successor;
     }
 
     private static Dictionary<string, string[]> Validate(SellPolicyData data, DateOnly today)

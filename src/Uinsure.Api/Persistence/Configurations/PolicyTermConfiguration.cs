@@ -14,6 +14,15 @@ public sealed class PolicyTermConfiguration : IEntityTypeConfiguration<PolicyTer
             table.HasCheckConstraint("CK_PolicyTerms_PositivePremium", "[Premium] > 0");
         });
         builder.HasKey(term => term.Id);
+        builder.HasAlternateKey(term => new { term.Id, term.PolicyId });
+        builder.HasIndex(term => term.PredecessorTermId)
+            .IsUnique()
+            .HasFilter("[PredecessorTermId] IS NOT NULL");
+        builder.HasOne<PolicyTerm>()
+            .WithMany()
+            .HasForeignKey(term => new { term.PredecessorTermId, term.PredecessorPolicyId })
+            .HasPrincipalKey(term => new { term.Id, term.PolicyId })
+            .OnDelete(DeleteBehavior.Restrict);
         builder.Property(term => term.StartDate).HasColumnType("date");
         builder.Property(term => term.EndDate).HasColumnType("date");
         builder.Property(term => term.Premium).HasPrecision(18, 2);

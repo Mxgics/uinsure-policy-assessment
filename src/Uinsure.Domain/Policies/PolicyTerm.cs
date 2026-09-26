@@ -8,6 +8,8 @@ public sealed class PolicyTerm
 
     public Guid Id { get; private set; }
     public Guid PolicyId { get; private set; }
+    public Guid? PredecessorTermId { get; private set; }
+    public Guid? PredecessorPolicyId { get; private set; }
     public DateOnly StartDate { get; private set; }
     public DateOnly EndDate { get; private set; }
     public decimal Premium { get; private set; }
@@ -37,6 +39,43 @@ public sealed class PolicyTerm
             PolicyholderSnapshot.Create(term.Id, holder)));
         term.Property = PropertySnapshot.Create(term.Id, data.Property);
         term.Payment = Payment.Create(term.Id, data.Premium, data.PaymentMethod, recordedAtUtc);
+        return term;
+    }
+
+    internal static PolicyTerm CreateRenewal(
+        Guid policyId,
+        PolicyTerm predecessor,
+        PaymentMethod? paymentMethod,
+        DateTimeOffset recordedAtUtc)
+    {
+        var startDate = predecessor.EndDate.AddDays(1);
+        var term = new PolicyTerm
+        {
+            Id = Guid.NewGuid(),
+            PolicyId = policyId,
+            PredecessorTermId = predecessor.Id,
+            PredecessorPolicyId = policyId,
+            StartDate = startDate,
+            EndDate = startDate.AddYears(1).AddDays(-1),
+            Premium = predecessor.Premium,
+            HasClaims = false,
+            AutoRenew = predecessor.AutoRenew
+        };
+        term._policyholders.AddRange(predecessor.Policyholders.Select(holder =>
+            PolicyholderSnapshot.Create(term.Id, new PolicyholderData(
+                holder.FirstName,
+                holder.LastName,
+                holder.DateOfBirth))));
+        term.Property = PropertySnapshot.Create(term.Id, new PropertyData(
+            predecessor.Property.AddressLine1,
+            predecessor.Property.AddressLine2,
+            predecessor.Property.City,
+            predecessor.Property.Postcode,
+            predecessor.Property.Bedrooms));
+        if (paymentMethod is not null)
+        {
+            term.Payment = Payment.Create(term.Id, term.Premium, paymentMethod.Value, recordedAtUtc);
+        }
         return term;
     }
 

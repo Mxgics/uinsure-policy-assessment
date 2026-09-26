@@ -2,7 +2,7 @@
 
 ## Current phase
 
-PR 4 adds cancellation quote/execution on the PR 3 sell/retrieve foundation. Refund calculation, cancellation/refund persistence, rollback, and competing cancellations are verified against SQL Server. Renewal, mixed lifecycle races, and the frontend remain on later stacked PRs.
+PR 5 completes the backend lifecycle on the PR 4 cancellation foundation. Renewal windows, paid/unpaid successors, predecessor integrity, rollback, and renew/renew plus cancel/renew races are verified against SQL Server. The demonstration frontend and final clean-clone review remain.
 
 After PR 1 merged, the owner approved a stacked workflow: PRs 2–7 are implemented continuously as dependent branches and reviewed/merged bottom-up.
 
