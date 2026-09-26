@@ -9,6 +9,7 @@ public sealed record PolicyResponse(
 
 public sealed record PolicyTermResponse(
     Guid Id,
+    Guid? PredecessorTermId,
     DateOnly StartDate,
     DateOnly EndDate,
     decimal Premium,

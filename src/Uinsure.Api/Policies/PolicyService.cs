@@ -99,9 +99,49 @@ public sealed class PolicyService(
         return Map(cancellation);
     }
 
+    public async Task<PolicyTermResponse?> RenewAsync(
+        string reference,
+        Guid termId,
+        RenewPolicyRequest request,
+        CancellationToken cancellationToken)
+    {
+        var policy = await QueryTrackedPolicy().SingleOrDefaultAsync(
+            item => item.Reference == reference.Trim().ToUpperInvariant(),
+            cancellationToken);
+        if (policy is null || policy.Terms.All(item => item.Id != termId))
+        {
+            return null;
+        }
+
+        var now = timeProvider.GetUtcNow();
+        var successor = policy.Renew(
+            termId,
+            DateOnly.FromDateTime(now.UtcDateTime),
+            request.PaymentMethod,
+            now);
+        dbContext.PolicyTerms.Add(successor);
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException exception)
+        {
+            throw new DomainConflictException("The policy changed while renewal was being applied.", exception);
+        }
+        catch (DbUpdateException exception) when (IsRenewalConstraintConflict(exception))
+        {
+            throw new DomainConflictException("The policy term was renewed by another request.", exception);
+        }
+        return MapTerm(successor, DateOnly.FromDateTime(now.UtcDateTime));
+    }
+
     private static bool IsCancellationConstraintConflict(DbUpdateException exception) =>
         exception.InnerException is SqlException { Number: 2601 or 2627 } sqlException &&
         sqlException.Message.Contains("IX_Cancellations_PolicyTermId", StringComparison.Ordinal);
+
+    private static bool IsRenewalConstraintConflict(DbUpdateException exception) =>
+        exception.InnerException is SqlException { Number: 2601 or 2627 } sqlException &&
+        sqlException.Message.Contains("IX_PolicyTerms_PredecessorTermId", StringComparison.Ordinal);
 
     private IQueryable<Policy> QueryPolicy() => dbContext.Policies
         .AsNoTracking()
@@ -186,6 +226,7 @@ public sealed class PolicyService(
 
     private static PolicyTermResponse MapTerm(PolicyTerm term, DateOnly today) => new(
         term.Id,
+        term.PredecessorTermId,
         term.StartDate,
         term.EndDate,
         term.Premium,

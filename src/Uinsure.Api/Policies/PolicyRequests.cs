@@ -35,3 +35,5 @@ public sealed class PropertyRequest
     public string? Postcode { get; init; }
     public int? Bedrooms { get; init; }
 }
+
+public sealed record RenewPolicyRequest(PaymentMethod? PaymentMethod);
