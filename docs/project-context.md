@@ -2,7 +2,7 @@
 
 ## Current phase
 
-PR 6 adds the responsive React policy desk on the complete PR 5 backend. Component and desktop/mobile browser-contract journeys cover sell, retrieve, quote/cancel, renewal, errors, and conflict refresh. Final clean-clone and whole-stack review remain in PR 7.
+PR 7 is the final documentation-only readiness checkpoint on the complete PR 6 application. A fresh clone passed locked restores, formatting, Release build, all backend/frontend/browser tests, and repository privacy/link checks. Owner review and bottom-up merges remain.
 
 After PR 1 merged, the owner approved a stacked workflow: PRs 2–7 are implemented continuously as dependent branches and reviewed/merged bottom-up.
 
@@ -33,4 +33,4 @@ The repository contains only public project material and synthetic examples. Sup
 - GitHub CI evidence is pending the PR 2 push.
 - Lifecycle behaviour and the browser app remain pending later stacked PRs.
 - A repository licence has not been selected.
-- GitHub CI evidence for the stacked branches remains pending.
+- PRs 2–6 reported successful applicable GitHub CI jobs when final readiness was prepared; PR 7's live CI result remains a review item.

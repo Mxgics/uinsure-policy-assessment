@@ -23,7 +23,7 @@ Status: all product requirements are verified locally; public PR review/merge an
 | B10 | Refund through the original payment method | Card/DD/cheque persistence checks | 4 | Verified locally |
 | D1 | Persist required policy, holder, property, payment and refund data | DTO, migration, constraint and retrieval assertions | 3–5 | Verified locally |
 | X1 | C# REST API | ASP.NET Core controller endpoints and HTTP examples | 2–5 | Verified locally |
-| X2 | Automated tests | Executed local/CI results with named tests | 2–7 | Verified locally; CI tracked separately |
+| X2 | Automated tests | Executed local/CI results with named tests | 2–7 | Verified locally; PRs 2–6 CI passed |
 | X3 | Informative responses | Consistent validation, 404, 409 and unexpected-error Problem Details | 2–5 | Verified locally |
 | X4 | Public GitHub repository | Public repository and reviewed PR links | 1–7 | In progress |
 | U1 | Small React demonstration | Accessible sell, find/view, quote/cancel and renew browser journeys | 6 | Verified locally |
