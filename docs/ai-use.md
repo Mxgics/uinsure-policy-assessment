@@ -20,3 +20,12 @@ This public log records material assistance, decisions, corrections, and verific
 - Corrections: selected portable test logging after Event Log access masked responses; replaced a non-pullable manifest digest with Docker's verified amd64 repo digest; retained SQL Server rather than substituting a database.
 - Verification: Release build, one domain boundary test, five HTTP contract tests, and one real SQL Server migration test passed. CI is pending push.
 - Remaining limit: the migration is intentionally schema-empty; policy behaviour begins in PR 3.
+
+## PR 3 — sell and retrieve
+
+- Task: implement the sell, policy retrieval, and term retrieval slice with domain rules and SQL persistence.
+- Assistance: drafted domain entities, explicit HTTP contracts, EF mappings/migration, deterministic tests, and aligned evidence documents.
+- Corrections: supplied the SQL connection through test-host configuration instead of ineffective EF registration replacement; treated `Location` as an absolute URI; removed test-order assumptions from persistence assertions.
+- Verification: 14 domain and 10 API/integration tests passed in Release against SQL Server in Docker.
+- Review decision: pending repository-owner review; PR 3 remains stacked on PR 2.
+- Remaining limits: lifecycle operations, conflict handling, browser workflows, and CI results belong to later work.

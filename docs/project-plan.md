@@ -10,7 +10,7 @@ Use small coherent stacked PRs, truthful evidence, and bottom-up review. The own
 | --- | --- | --- | --- |
 | 1 | Brief, requirements, assumptions, architecture ADR, context/plan, agent/contribution/PR conventions | Public documentation PR is verified and ready for owner review; no implementation claims | Merged |
 | 2 | ASP.NET controllers/SQL/migrations, reproducible tests/CI, OpenAPI/errors, local tooling | Clean local foundation runs; real SQL migration/test path and CI are verified; Docker execution is evidenced | Ready for review; CI pending push |
-| 3 | Sell, policy retrieval, term retrieval | Validated domain/API/SQL behaviour and history for M1/M2 and related boundaries | Not started |
+| 3 | Sell, policy retrieval, term retrieval | Validated domain/API/SQL behaviour and history for M1/M2 and related boundaries | Ready for review; local verification passed |
 | 4 | Cancellation quote/execution | Refund rules, claims/no-payment, atomicity, rollback and cancel races verified; assessment minimum complete | Not started |
 | 5 | Renewal | Window, successor/history, payments/cheque, and mixed lifecycle races verified | Not started |
 | 6 | React UI | Accessible responsive workflows and real browser journeys verified | Not started |
