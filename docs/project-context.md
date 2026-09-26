@@ -2,7 +2,7 @@
 
 ## Current phase
 
-PR 3 adds sell and retrieval behaviour on the PR 2 foundation. Policy, term, holder/property snapshots, and the initial recorded payment are persisted through a real migration; cancellation, renewal, and the frontend remain on later stacked PRs.
+PR 4 adds cancellation quote/execution on the PR 3 sell/retrieve foundation. Refund calculation, cancellation/refund persistence, rollback, and competing cancellations are verified against SQL Server. Renewal, mixed lifecycle races, and the frontend remain on later stacked PRs.
 
 After PR 1 merged, the owner approved a stacked workflow: PRs 2–7 are implemented continuously as dependent branches and reviewed/merged bottom-up.
 

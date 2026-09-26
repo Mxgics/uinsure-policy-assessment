@@ -30,3 +30,12 @@ The first SQL-backed feature run failed because the test host replaced EF regist
 - UI: component tests and Playwright workflows with synthetic historical fixtures.
 
 Tests fail rather than skip when Docker is unavailable. EF InMemory and SQLite are not substitutes.
+
+## PR 4 evidence — 2026-09-26
+
+- Test-first calculator cycle: the new literal tests failed before cancellation types existed, then passed after implementation; one day-count expectation was corrected transparently.
+- Final Release suite: 24 domain tests and 16 API/SQL integration tests passed.
+- Calculation: before-start, days 1/14/15, final day, leap term, away-from-zero rounding, claims, no payment, and after-end rejection passed.
+- HTTP/persistence: quote was read-only; execution recalculated and stored cancellation plus optional same-method refund; repeated/mismatched operations returned 409/404.
+- Concurrency: a deterministic two-context barrier produced one 201 and one 409 with one cancellation/refund and one policy revision.
+- Atomicity: a temporary SQL trigger failed the later refund write; a fresh context found no cancellation, no added refund, and no policy revision update. The trigger was removed in `finally`.

@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Uinsure.Api.Persistence;
 using Uinsure.Domain.Policies;
 
@@ -54,6 +55,54 @@ public sealed class PolicyService(
         return term is null ? null : MapTerm(term, UtcToday());
     }
 
+    public async Task<CancellationResponse?> QuoteCancellationAsync(
+        string reference,
+        Guid termId,
+        DateOnly date,
+        CancellationToken cancellationToken)
+    {
+        var policy = await QueryPolicy().SingleOrDefaultAsync(
+            item => item.Reference == reference.Trim().ToUpperInvariant(),
+            cancellationToken);
+        var term = policy?.Terms.SingleOrDefault(item => item.Id == termId);
+        return term is null ? null : Map(term.QuoteCancellation(date), null, null);
+    }
+
+    public async Task<CancellationResponse?> CancelAsync(
+        string reference,
+        Guid termId,
+        CancellationToken cancellationToken)
+    {
+        var policy = await QueryTrackedPolicy().SingleOrDefaultAsync(
+            item => item.Reference == reference.Trim().ToUpperInvariant(),
+            cancellationToken);
+        if (policy is null || policy.Terms.All(item => item.Id != termId))
+        {
+            return null;
+        }
+
+        var now = timeProvider.GetUtcNow();
+        var cancellation = policy.Cancel(termId, DateOnly.FromDateTime(now.UtcDateTime), now);
+        dbContext.Cancellations.Add(cancellation);
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateConcurrencyException exception)
+        {
+            throw new DomainConflictException("The policy changed while cancellation was being applied.", exception);
+        }
+        catch (DbUpdateException exception) when (IsCancellationConstraintConflict(exception))
+        {
+            throw new DomainConflictException("The policy term was cancelled by another request.", exception);
+        }
+        return Map(cancellation);
+    }
+
+    private static bool IsCancellationConstraintConflict(DbUpdateException exception) =>
+        exception.InnerException is SqlException { Number: 2601 or 2627 } sqlException &&
+        sqlException.Message.Contains("IX_Cancellations_PolicyTermId", StringComparison.Ordinal);
+
     private IQueryable<Policy> QueryPolicy() => dbContext.Policies
         .AsNoTracking()
         .Include(policy => policy.Terms)
@@ -61,7 +110,21 @@ public sealed class PolicyService(
         .Include(policy => policy.Terms)
             .ThenInclude(term => term.Property)
         .Include(policy => policy.Terms)
-            .ThenInclude(term => term.Payment);
+            .ThenInclude(term => term.Payment)
+        .Include(policy => policy.Terms)
+            .ThenInclude(term => term.Cancellation)
+                .ThenInclude(cancellation => cancellation!.Refund);
+
+    private IQueryable<Policy> QueryTrackedPolicy() => dbContext.Policies
+        .Include(policy => policy.Terms)
+            .ThenInclude(term => term.Policyholders)
+        .Include(policy => policy.Terms)
+            .ThenInclude(term => term.Property)
+        .Include(policy => policy.Terms)
+            .ThenInclude(term => term.Payment)
+        .Include(policy => policy.Terms)
+            .ThenInclude(term => term.Cancellation)
+                .ThenInclude(cancellation => cancellation!.Refund);
 
     private DateOnly UtcToday() =>
         DateOnly.FromDateTime(timeProvider.GetUtcNow().UtcDateTime);
@@ -144,5 +207,40 @@ public sealed class PolicyService(
             term.Payment.Reference,
             term.Payment.Method,
             term.Payment.Amount,
-            term.Payment.RecordedAtUtc));
+            term.Payment.RecordedAtUtc),
+        term.Cancellation is null ? null : Map(term.Cancellation));
+
+    private static CancellationResponse Map(Cancellation cancellation) => Map(
+        new CancellationCalculation(
+            cancellation.EffectiveDate,
+            cancellation.RefundAmount,
+            cancellation.RetainedPremium,
+            "GBP",
+            cancellation.Refund?.Method,
+            cancellation.Reason,
+            cancellation.TotalDays,
+            cancellation.UsedDays,
+            cancellation.UnusedDays),
+        cancellation.RecordedAtUtc,
+        cancellation.Refund);
+
+    private static CancellationResponse Map(
+        CancellationCalculation calculation,
+        DateTimeOffset? recordedAtUtc,
+        Refund? refund) => new(
+            calculation.Date,
+            calculation.RefundAmount,
+            calculation.RetainedPremium,
+            calculation.Currency,
+            calculation.Method,
+            calculation.Reason,
+            calculation.TotalDays,
+            calculation.UsedDays,
+            calculation.UnusedDays,
+            recordedAtUtc,
+            refund is null ? null : new RefundResponse(
+                refund.Reference,
+                refund.Amount,
+                refund.Method,
+                refund.RecordedAtUtc));
 }

@@ -29,5 +29,9 @@ public sealed class PolicyTermConfiguration : IEntityTypeConfiguration<PolicyTer
             .WithOne()
             .HasForeignKey<Payment>(payment => payment.PolicyTermId)
             .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne(term => term.Cancellation)
+            .WithOne()
+            .HasForeignKey<Cancellation>(cancellation => cancellation.PolicyTermId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

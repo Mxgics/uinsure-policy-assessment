@@ -18,7 +18,8 @@ public sealed record PolicyTermResponse(
     PaymentState PaymentState,
     IReadOnlyList<PolicyholderResponse> Policyholders,
     PropertyResponse Property,
-    PaymentResponse? Payment);
+    PaymentResponse? Payment,
+    CancellationResponse? Cancellation);
 
 public sealed record PolicyholderResponse(
     string FirstName,
@@ -36,4 +37,23 @@ public sealed record PaymentResponse(
     string Reference,
     PaymentMethod Method,
     decimal Amount,
+    DateTimeOffset RecordedAtUtc);
+
+public sealed record CancellationResponse(
+    DateOnly Date,
+    decimal RefundAmount,
+    decimal RetainedPremium,
+    string Currency,
+    PaymentMethod? Method,
+    CancellationReason Reason,
+    int TotalDays,
+    int UsedDays,
+    int UnusedDays,
+    DateTimeOffset? RecordedAtUtc,
+    RefundResponse? Refund);
+
+public sealed record RefundResponse(
+    string Reference,
+    decimal Amount,
+    PaymentMethod Method,
     DateTimeOffset RecordedAtUtc);
