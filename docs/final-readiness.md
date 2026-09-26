@@ -11,7 +11,23 @@ The public repository deliberately excludes supplied assessment files, credentia
 
 ## Clean-clone verification
 
-Pending execution after this branch is first pushed. Do not interpret this placeholder as evidence.
+Fresh clone of `codex/pr7-final-readiness` at `ed1fc15`:
+
+- locked .NET tool/package restore passed;
+- `dotnet format Uinsure.slnx --verify-no-changes --no-restore` passed;
+- Release build passed with zero warnings/errors;
+- 34 domain and 26 SQL Server/Testcontainers integration tests passed;
+- `npm ci` plus high-severity audit passed with zero known vulnerabilities across 153 packages;
+- production frontend build and three component tests passed;
+- six desktop/mobile Chromium journeys passed;
+- all tracked relative Markdown links resolved;
+- private-path/credential patterns were absent, no PDFs were tracked, `git diff --check` passed, and the clone was clean with 127 tracked files.
+
+The follow-up commit only records this evidence and changes documentation. Relative links, privacy patterns, diff whitespace, and Git cleanliness are rechecked after it.
+
+## CI state at final review preparation
+
+GitHub reported successful backend jobs on PRs 2–5 and successful backend plus frontend jobs on PR 6. PR 7 CI starts after the final evidence commit; its live result belongs in the PR review checkpoint rather than being predicted here.
 
 ## Remaining limitations
 
@@ -24,4 +40,4 @@ Pending execution after this branch is first pushed. Do not interpret this place
 
 ## Review order
 
-Review and merge [PR 2](https://github.com/Mxgics/uinsure-policy-assessment/pull/2) through PR 7 bottom-up. After each base merges, retarget the next PR to `main`. Do not merge a dependent PR before its base.
+Review and merge [PR 2](https://github.com/Mxgics/uinsure-policy-assessment/pull/2), [PR 3](https://github.com/Mxgics/uinsure-policy-assessment/pull/3), [PR 4](https://github.com/Mxgics/uinsure-policy-assessment/pull/4), [PR 5](https://github.com/Mxgics/uinsure-policy-assessment/pull/5), PR 6, then PR 7. After each base merges, retarget the next PR to `main`. Do not merge a dependent PR before its base.

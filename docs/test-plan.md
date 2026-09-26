@@ -60,3 +60,16 @@ Tests fail rather than skip when Docker is unavailable. EF InMemory and SQLite a
 - Visual review: full-page desktop and mobile captures were inspected; no horizontal overflow, clipped controls, or broken responsive stacking was observed.
 
 Browser tests intercept deterministic API contracts. They verify the rendered workflow and request/response integration at the browser boundary; backend tests separately exercise the real HTTP/SQL stack.
+
+## PR 7 clean-clone evidence — 2026-09-26
+
+Fresh clone of remote branch `codex/pr7-final-readiness` at `ed1fc15`:
+
+- exact locked .NET and npm restores passed; npm high-severity audit found zero vulnerabilities in 153 packages;
+- non-mutating .NET formatting check passed;
+- Release build passed with zero warnings and zero errors;
+- 34 domain and 26 SQL-backed integration tests passed without skips;
+- production frontend build, three component tests, and six desktop/mobile Chromium journeys passed;
+- 127 tracked files were scanned: all relative Markdown links resolved, privacy/credential patterns were absent, no PDF was tracked, whitespace checks passed, and Git status was clean.
+
+GitHub check inspection showed successful backend jobs on PRs 2–5 and successful backend/frontend jobs on PR 6. PR 7 CI is checked at the review checkpoint after the final push.

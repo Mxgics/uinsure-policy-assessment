@@ -14,7 +14,7 @@ Use small coherent stacked PRs, truthful evidence, and bottom-up review. The own
 | 4 | Cancellation quote/execution | Refund rules, claims/no-payment, atomicity, rollback and cancel races verified; assessment minimum complete | Ready for review; local verification passed |
 | 5 | Renewal | Window, successor/history, payments/cheque, and mixed lifecycle races verified | Ready for review; local verification passed |
 | 6 | React UI | Accessible responsive workflows and real browser journeys verified | Ready for review; local verification passed |
-| 7 | Final readiness | Clean-clone proof, complete requirement evidence, walkthrough, limits and public-source review | In progress: clean-clone run pending |
+| 7 | Final readiness | Clean-clone proof, complete requirement evidence, walkthrough, limits and public-source review | Ready for review; clean-clone verification passed |
 
 Review and merge bottom-up. After a base PR merges, retarget the next PR to `main`; never merge a dependent PR before its base.
 
