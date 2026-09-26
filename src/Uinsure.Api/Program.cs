@@ -3,13 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Uinsure.Api.Errors;
 using Uinsure.Api.Persistence;
+using Uinsure.Api.Policies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
     .AddControllers()
     .AddJsonOptions(options =>
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+        options.JsonSerializerOptions.Converters.Add(
+            new JsonStringEnumConverter(allowIntegerValues: false)));
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
@@ -38,9 +40,13 @@ builder.Services.AddProblemDetails(options =>
             context.HttpContext,
             ApiProblemDetailsDefaults.CodeFor(context.ProblemDetails.Status));
 });
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 
 builder.Services.AddOpenApi("v1");
 builder.Services.AddHealthChecks();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<IPolicyReferenceGenerator, PolicyReferenceGenerator>();
+builder.Services.AddScoped<PolicyService>();
 builder.Services.AddDbContext<UinsureDbContext>((services, options) =>
 {
     var configuration = services.GetRequiredService<IConfiguration>();
