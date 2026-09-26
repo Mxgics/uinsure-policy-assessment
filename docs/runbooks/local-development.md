@@ -4,7 +4,7 @@
 
 - .NET SDK `10.0.400` selected by `global.json`.
 - Docker Desktop or a Linux-container Docker Engine on x86-64 with at least 2 GB available to SQL Server.
-- PowerShell 7 for maintained Windows scripts. Node `24.19.0` is pinned for the later frontend.
+- PowerShell 7 for maintained Windows scripts. Node `24.19.0` is pinned for the frontend.
 - Acceptance of the SQL Server Developer container licence for non-production development/testing.
 
 SQL Server is pinned to `2022-CU27-ubuntu-22.04` and its immutable amd64 repo digest. Services bind only to loopback. A password is generated into ignored `.local/sql.env`; it is neither printed nor committed.
@@ -19,6 +19,16 @@ pwsh -File scripts/Start-Local.ps1
 ```
 
 `Start-Local.ps1` also starts SQL and applies migrations. The API listens at `http://127.0.0.1:5080`; liveness is `/health` and OpenAPI is `/openapi/v1.json`.
+
+In a second terminal, start the React demonstration:
+
+```powershell
+Set-Location web
+npm ci
+npm run dev
+```
+
+Open `http://127.0.0.1:5173`. Vite proxies `/api` to the loopback API; there is no broad CORS policy and no policy data is placed in browser storage.
 
 ```powershell
 pwsh -File scripts/Test-Local.ps1
@@ -39,7 +49,7 @@ dotnet ef database update --project src/Uinsure.Api/Uinsure.Api.csproj --startup
 dotnet run --project src/Uinsure.Api/Uinsure.Api.csproj --no-launch-profile --urls http://127.0.0.1:5080
 ```
 
-Use the restore/format/build/test commands in `.github/workflows/ci.yml` for Linux verification.
+Use the restore/format/build/test commands in `.github/workflows/ci.yml` for Linux verification. Frontend verification is `npm ci`, `npm run build`, `npm test`, `npx playwright install chromium`, then `npm run test:e2e` from `web/`.
 
 ## Diagnosis and recovery
 

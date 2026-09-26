@@ -49,3 +49,14 @@ Tests fail rather than skip when Docker is unavailable. EF InMemory and SQLite a
 - Integrity/history: duplicate renewal conflicted, active successor blocked parent cancellation, cancelled successor remained history, parent cancellation then succeeded, and replacement renewal remained blocked.
 - Concurrency: deterministic renew/renew and cancel/renew pairs each produced one 201 and one 409 with exactly one lifecycle effect.
 - Atomicity: an injected SQL payment-trigger failure left no successor and no policy revision update.
+
+## PR 6 evidence — 2026-09-26
+
+- Locked install/audit: 153 packages audited with zero known vulnerabilities.
+- Production build: TypeScript project references and Vite production build passed.
+- Components: three tests passed for labelled controls/demo warning, surfaced API detail, policy history, and conflict refresh.
+- Browser contracts: six Playwright tests passed—sell, quote/cancel, and renew in desktop Chromium and a Pixel 7 viewport.
+- Accessibility/interaction: visible labels/grouping, keyboard focus styling, destructive dialog focus, live errors/status, disabled in-flight mutations, Escape close/focus return, and reduced motion were checked.
+- Visual review: full-page desktop and mobile captures were inspected; no horizontal overflow, clipped controls, or broken responsive stacking was observed.
+
+Browser tests intercept deterministic API contracts. They verify the rendered workflow and request/response integration at the browser boundary; backend tests separately exercise the real HTTP/SQL stack.

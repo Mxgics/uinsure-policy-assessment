@@ -13,7 +13,7 @@ Use small coherent stacked PRs, truthful evidence, and bottom-up review. The own
 | 3 | Sell, policy retrieval, term retrieval | Validated domain/API/SQL behaviour and history for M1/M2 and related boundaries | Ready for review; local verification passed |
 | 4 | Cancellation quote/execution | Refund rules, claims/no-payment, atomicity, rollback and cancel races verified; assessment minimum complete | Ready for review; local verification passed |
 | 5 | Renewal | Window, successor/history, payments/cheque, and mixed lifecycle races verified | Ready for review; local verification passed |
-| 6 | React UI | Accessible responsive workflows and real browser journeys verified | Not started |
+| 6 | React UI | Accessible responsive workflows and real browser journeys verified | Ready for review; local verification passed |
 | 7 | Final readiness | Clean-clone proof, complete requirement evidence, walkthrough, limits and public-source review | Not started |
 
 Review and merge bottom-up. After a base PR merges, retarget the next PR to `main`; never merge a dependent PR before its base.
