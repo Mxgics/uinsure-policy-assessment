@@ -1,0 +1,37 @@
+# Supplied/private material
+*.pdf
+interview-prep/
+private/
+credentials/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+**/appsettings.Local.json
+**/appsettings.*.local.json
+*.pfx
+*.key
+*.pem
+
+# .NET and editor output
+bin/
+obj/
+.vs/
+*.user
+*.suo
+.idea/
+.vscode/
+
+# Node and test output
+node_modules/
+dist/
+coverage/
+test-results/
+playwright-report/
+
+# Local databases, logs, and OS files
+*.db
+*.log
+.DS_Store
+Thumbs.db
