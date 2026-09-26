@@ -14,6 +14,8 @@ This repository is delivered through small stacked pull requests. PR 1 establish
 - [Delivery plan](docs/project-plan.md)
 - [Contribution and PR workflow](CONTRIBUTING.md)
 - [AI assistance log](docs/ai-use.md)
+- [Reviewer walkthrough](docs/walkthrough.md)
+- [Final readiness and limits](docs/final-readiness.md)
 
 ## Current status
 
