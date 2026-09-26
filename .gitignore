@@ -31,6 +31,11 @@ coverage/
 test-results/
 playwright-report/
 TestResults/
+*.tsbuildinfo
+web/vite.config.js
+web/vite.config.d.ts
+web/playwright.config.js
+web/playwright.config.d.ts
 
 # Local databases, logs, and OS files
 *.db
