@@ -2,7 +2,7 @@
 
 A small home-insurance policy API and React demonstration built as a technical assessment. The project will support selling, retrieving, cancelling, and renewing Household and Buy to Let policies, with the optional cancellation rules and a focused browser UI.
 
-This repository is being delivered through small, reviewed pull requests. PR 1 establishes the agreed product, architecture, assumptions, and delivery conventions; it contains no application implementation or passing-test claims.
+This repository is delivered through small stacked pull requests. PR 1 established the product and architecture; PR 2 adds the executable API/SQL/test/CI foundation. Dependent branches add behaviour and UI as separate review diffs.
 
 ## Start here
 
@@ -17,7 +17,7 @@ This repository is being delivered through small, reviewed pull requests. PR 1 e
 
 ## Current status
 
-Documentation foundation only. The API, database, tests, CI, local tooling, and frontend are planned for later reviewed PRs. Docker CLI is present in the development environment, but SQL Server container execution has not been verified because the Docker Linux engine was not running when PR 1 was prepared.
+The backend foundation builds and its HTTP/real-SQL checks pass locally. Policy lifecycle behaviour and the frontend remain on later stacked branches. See the [local runbook](docs/runbooks/local-development.md) and [test evidence](docs/test-plan.md).
 
 ## Deliberate boundaries
 

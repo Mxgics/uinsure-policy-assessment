@@ -2,7 +2,7 @@
 
 ## Branch and review workflow
 
-`main` is the default and only long-lived branch. Start each coherent change from an up-to-date `main` and use a descriptive `codex/` branch. Open a pull request into `main`, explain the decision and verification, and wait for repository-owner review before merging or beginning the next planned PR.
+`main` is the default and only long-lived branch. Use descriptive `codex/` branches. Independent work starts from `main`; an approved stack targets each PR at its immediate predecessor. Review and merge bottom-up, retargeting the next PR to `main` after its base merges.
 
 Keep commits reviewable. A commit should represent one understandable step and must not claim tests, Docker execution, or runtime behaviour that was not observed. Do not rewrite shared history or combine unrelated cleanup with a feature.
 

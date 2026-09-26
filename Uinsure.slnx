@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Uinsure.Api/Uinsure.Api.csproj" />
+    <Project Path="src/Uinsure.Domain/Uinsure.Domain.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Uinsure.Api.IntegrationTests/Uinsure.Api.IntegrationTests.csproj" />
+    <Project Path="tests/Uinsure.Domain.Tests/Uinsure.Domain.Tests.csproj" />
+  </Folder>
+</Solution>
