@@ -21,7 +21,7 @@ The assessment user is a local reviewer using synthetic data. The supported jour
 - Local setup uses the documented .NET, Node, Docker, and SQL Server toolchain and works from a clean clone.
 - API responses are informative and consistent, history remains auditable, and lifecycle mutations are atomic under concurrency.
 - Documentation distinguishes decisions, assumptions, executed verification, and remaining limitations.
-- Each focused PR is reviewed before the next begins.
+- Each focused stacked PR remains independently reviewable and is reviewed/merged bottom-up.
 
 ## In scope
 
@@ -33,4 +33,4 @@ Authentication, authorization, real customers, real money movement, pricing engi
 
 ## Delivery contract
 
-Use small pull requests into `main`. Backend foundations and behaviour precede the UI. Stop for repository-owner review at each checkpoint; do not merge or begin the next PR without that review. If time or tooling requires a scope reduction, make it explicit rather than quietly dropping requirements or evidence.
+Use small pull requests into `main`. Backend foundations and behaviour precede the UI. The owner approved continuous implementation as a dependent stack after PR 1; review and merge remain bottom-up, with no dependent merge before its base. If time or tooling requires a scope reduction, make it explicit rather than quietly dropping requirements or evidence.
