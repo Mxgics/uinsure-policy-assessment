@@ -40,4 +40,39 @@ public sealed class PoliciesController(PolicyService policyService) : Controller
         var term = await policyService.GetTermAsync(reference, termId, cancellationToken);
         return term is null ? NotFound() : Ok(term);
     }
+
+    [HttpGet("{reference}/terms/{termId:guid}/cancellation-quote")]
+    [ProducesResponseType<CancellationResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ValidationProblemDetails>(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<CancellationResponse>> QuoteCancellation(
+        string reference,
+        Guid termId,
+        [FromQuery] DateOnly? date,
+        CancellationToken cancellationToken)
+    {
+        if (date is null)
+        {
+            ModelState.AddModelError("date", "Date is required.");
+            return ValidationProblem(ModelState);
+        }
+        var quote = await policyService.QuoteCancellationAsync(reference, termId, date.Value, cancellationToken);
+        return quote is null ? NotFound() : Ok(quote);
+    }
+
+    [HttpPost("{reference}/terms/{termId:guid}/cancellations")]
+    [ProducesResponseType<CancellationResponse>(StatusCodes.Status201Created)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict)]
+    public async Task<ActionResult<CancellationResponse>> Cancel(
+        string reference,
+        Guid termId,
+        CancellationToken cancellationToken)
+    {
+        var cancellation = await policyService.CancelAsync(reference, termId, cancellationToken);
+        return cancellation is null
+            ? NotFound()
+            : CreatedAtAction(nameof(GetTerm), new { reference, termId }, cancellation);
+    }
 }

@@ -37,6 +37,15 @@ public sealed class Policy
         return policy;
     }
 
+    public Cancellation Cancel(Guid termId, DateOnly date, DateTimeOffset recordedAtUtc)
+    {
+        var term = _terms.SingleOrDefault(item => item.Id == termId)
+            ?? throw new InvalidOperationException("The term does not belong to this policy.");
+        var cancellation = term.Cancel(date, recordedAtUtc);
+        MutationRevision++;
+        return cancellation;
+    }
+
     private static Dictionary<string, string[]> Validate(SellPolicyData data, DateOnly today)
     {
         var errors = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
