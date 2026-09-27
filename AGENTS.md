@@ -4,9 +4,9 @@ Read `docs/project-context.md`, `docs/project-plan.md`, and `docs/requirements.m
 
 The repository root must resolve to this project before any add, commit, or push. Never stage from a parent directory. Use `main` plus focused `codex/` branches; stop for owner review after each PR and never merge without explicit instruction.
 
-PR 1 is documentation only. No application restore, build, migration, test, or run command exists yet. Do not invent results. For current checks use `git diff --check`, inspect `git status --short`, and validate Markdown links.
+Use `pwsh -File scripts/Test-Local.ps1` for locked restore, formatting, Release build, and tests. Use `pwsh -File scripts/Start-Local.ps1` for SQL, explicit migration, and the loopback API; see `docs/runbooks/local-development.md`.
 
-From PR 2 onward, keep exact commands in this file and evidence in `docs/changes/` and the test plan. Use genuine red/green/refactor for business behaviour; record the failing case, smallest implementation, refactor, and rerun.
+Keep evidence in `docs/changes/` and `docs/test-plan.md`. Use genuine red/green/refactor for business behaviour; record the failing case, smallest implementation, refactor, and rerun.
 
 Keep supplied assessment PDFs, credentials, local machine paths, personal/interview notes, real customer data, and generated secrets out of the repository. Use synthetic data only. Do not substitute another database when Docker or SQL Server is unavailable.
 

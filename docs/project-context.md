@@ -2,9 +2,9 @@
 
 ## Current phase
 
-PR 1 establishes the public documentation baseline. There is no application solution, source code, database schema, migration, test suite, CI workflow, container configuration, or frontend yet. Accordingly, no runtime or test result is claimed.
+PR 2 establishes the executable backend foundation: projects, controller host, Problem Details, OpenAPI, liveness, EF Core SQL Server wiring, explicit initial migration, Docker/Testcontainers proof, CI, and local scripts. Policy behaviour and the frontend remain on later stacked PRs.
 
-The public repository uses `main` as its default branch and a focused `codex/pr1-project-foundation` branch for this work. PR review is the gate before any PR 2 foundation implementation begins.
+After PR 1 merged, the owner approved a stacked workflow: PRs 2–7 are implemented continuously as dependent branches and reviewed/merged bottom-up.
 
 ## Observed environment
 
@@ -13,10 +13,10 @@ Observed while preparing PR 1 on 26 September 2026:
 - .NET SDK `10.0.400`;
 - Node.js `24.19.0` and npm `11.5.1`;
 - Docker CLI `29.7.2`;
-- Docker’s Linux engine pipe was absent, so server health and SQL Server container execution remain unverified;
+- Docker Engine `29.7.2` was started and SQL Server 2022 CU27 migration execution was verified through Testcontainers;
 - the project uses an isolated Git root rather than the parent user-profile repository.
 
-These observations describe one development machine, not portable prerequisites or successful project execution. PR 2 must resolve and pin compatible dependency/container versions, verify Docker-backed execution, and record exact commands and results.
+These observations describe one development machine. Exact pins and evidence are in `docs/changes/002-api-foundation.md` and `docs/test-plan.md`; GitHub CI supplies the portable check after push.
 
 ## Accepted direction
 
@@ -30,7 +30,7 @@ The repository contains only public project material and synthetic examples. Sup
 
 ## Known unresolved issues
 
-- Docker engine/SQL Server execution is not yet verified.
-- Exact stable NuGet, npm, container tag/digest, and GitHub Action SHAs will be resolved in PR 2.
+- GitHub CI evidence is pending the PR 2 push.
+- Policy schema/behaviour and the browser app remain pending later stacked PRs.
 - A repository licence has not been selected.
 - All implementation and test evidence remains pending.

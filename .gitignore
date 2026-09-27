@@ -3,6 +3,7 @@
 interview-prep/
 private/
 credentials/
+.local/
 
 # Secrets and local configuration
 .env
@@ -29,6 +30,7 @@ dist/
 coverage/
 test-results/
 playwright-report/
+TestResults/
 
 # Local databases, logs, and OS files
 *.db
