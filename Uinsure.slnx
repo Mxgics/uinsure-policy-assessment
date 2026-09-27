@@ -6,5 +6,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/Uinsure.Api.IntegrationTests/Uinsure.Api.IntegrationTests.csproj" />
     <Project Path="tests/Uinsure.Domain.Tests/Uinsure.Domain.Tests.csproj" />
+    <Project Path="tests/Uinsure.FullStack/Uinsure.FullStack.csproj" />
   </Folder>
 </Solution>

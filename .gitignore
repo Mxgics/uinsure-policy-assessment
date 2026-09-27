@@ -36,6 +36,8 @@ web/vite.config.js
 web/vite.config.d.ts
 web/playwright.config.js
 web/playwright.config.d.ts
+web/playwright.fullstack.config.js
+web/playwright.fullstack.config.d.ts
 
 # Local databases, logs, and OS files
 *.db

@@ -28,6 +28,31 @@ jobs:
           path: TestResults/*.trx
           if-no-files-found: error
           retention-days: 7
+  fullstack:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1
+        with:
+          global-json-file: global.json
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: .nvmrc
+      - run: npm ci
+        working-directory: web
+      - run: npx playwright install --with-deps chromium
+        working-directory: web
+      - run: pwsh -File scripts/Test-FullStack.ps1
+      - if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: fullstack-results
+          path: |
+            TestResults/fullstack-*
+            web/test-results
+          if-no-files-found: error
+          retention-days: 7
   frontend:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
