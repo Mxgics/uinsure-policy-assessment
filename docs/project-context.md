@@ -2,7 +2,7 @@
 
 ## Current phase
 
-PR 2 establishes the executable backend foundation: projects, controller host, Problem Details, OpenAPI, liveness, EF Core SQL Server wiring, explicit initial migration, Docker/Testcontainers proof, CI, and local scripts. Policy behaviour and the frontend remain on later stacked PRs.
+PR 3 adds sell and retrieval behaviour on the PR 2 foundation. Policy, term, holder/property snapshots, and the initial recorded payment are persisted through a real migration; cancellation, renewal, and the frontend remain on later stacked PRs.
 
 After PR 1 merged, the owner approved a stacked workflow: PRs 2–7 are implemented continuously as dependent branches and reviewed/merged bottom-up.
 
@@ -31,6 +31,6 @@ The repository contains only public project material and synthetic examples. Sup
 ## Known unresolved issues
 
 - GitHub CI evidence is pending the PR 2 push.
-- Policy schema/behaviour and the browser app remain pending later stacked PRs.
+- Lifecycle behaviour and the browser app remain pending later stacked PRs.
 - A repository licence has not been selected.
-- All implementation and test evidence remains pending.
+- GitHub CI evidence for the stacked branches remains pending.

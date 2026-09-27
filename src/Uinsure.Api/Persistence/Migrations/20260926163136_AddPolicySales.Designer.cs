@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Uinsure.Api.Persistence;
 
@@ -11,9 +12,11 @@ using Uinsure.Api.Persistence;
 namespace Uinsure.Api.Persistence.Migrations
 {
     [DbContext(typeof(UinsureDbContext))]
-    partial class UinsureDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260926163136_AddPolicySales")]
+    partial class AddPolicySales
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

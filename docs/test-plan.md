@@ -13,6 +13,15 @@ The first HTTP run exposed Windows Event Log access in the test host; portable c
 
 Policy behaviour, rollback injection, lifecycle races, and browser journeys remain pending their stacked PRs. CI evidence is pending branch push.
 
+## PR 3 evidence — 2026-09-26
+
+- Release solution suite: 14 domain tests and 10 API/integration tests passed.
+- Domain boundaries: sale-date limits, one-year/leap calculation, holder count, age, supported types, premium precision, and normalisation passed with a fixed clock.
+- HTTP/SQL behaviour: sale returned 201 and a retrievable Location; policy and term retrieval matched persisted snapshots; required booleans and numeric enums were rejected; unknown/mismatched resources returned 404; the current migration applied to SQL Server.
+- Persistence: returned policy/term identifiers were found in fresh EF queries with a recorded payment.
+
+The first SQL-backed feature run failed because the test host replaced EF registrations while the application still resolved its deferred configuration callback. Supplying the isolated connection string through test configuration fixed the host accurately. A subsequent assertion was corrected to compare the path of the valid absolute Location URI. The final full run passed against Docker; no result was skipped or substituted.
+
 ## Planned layers
 
 - Domain: deterministic rules with independent literal expectations.
