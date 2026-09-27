@@ -32,7 +32,7 @@ export interface PolicyTerm {
   state: 'Scheduled' | 'Current' | 'Expired' | 'Cancelled'
   paymentState: 'Recorded' | 'NotRecorded'
   policyholders: Array<{ firstName: string; lastName: string; dateOfBirth: string }>
-  property: { addressLine1: string; addressLine2: string | null; city: string; postcode: string; bedrooms: number }
+  property: { addressLine1: string; addressLine2: string | null; addressLine3: string | null; city: string | null; postcode: string }
   payment: { reference: string; method: PaymentMethod; amount: number } | null
   cancellation: CancellationResult | null
 }
@@ -50,6 +50,6 @@ export interface SellPolicyInput {
   hasClaims: boolean
   autoRenew: boolean
   policyholders: Array<{ firstName: string; lastName: string; dateOfBirth: string }>
-  property: { addressLine1: string; addressLine2: null; city: string; postcode: string; bedrooms: number }
+  property: PolicyTerm['property']
   paymentMethod: PaymentMethod
 }

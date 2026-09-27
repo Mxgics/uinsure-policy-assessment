@@ -11,7 +11,7 @@ export const term: PolicyTerm = {
   state: 'Current',
   paymentState: 'Recorded',
   policyholders: [{ firstName: 'Ada', lastName: 'Lovelace', dateOfBirth: '1990-01-01' }],
-  property: { addressLine1: '1 Test Road', addressLine2: null, city: 'Manchester', postcode: 'M1 1AA', bedrooms: 3 },
+  property: { addressLine1: '1 Test Road', addressLine2: null, addressLine3: null, city: 'Manchester', postcode: 'M1 1AA' },
   payment: { reference: 'PAY-TEST', method: 'Card', amount: 365 },
   cancellation: null,
 }

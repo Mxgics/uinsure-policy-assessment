@@ -59,9 +59,11 @@ legend { padding: 0 .3rem; font-family: Georgia, 'Times New Roman', serif; font-
 .sell-submit { grid-column: 1 / -1; padding: 1rem; }
 
 .policy-heading { margin-bottom: 1.2rem; }
+.policy-heading > div { min-width: 0; }
+#policy-heading, .alert, .facts dd { overflow-wrap: anywhere; }
 .button--quiet { background: transparent; color: var(--forest); border: 1px solid #789087; }
 .button--secondary { background: #dcebe4; color: var(--ink); }
-.button--danger { background: var(--coral); }
+.button--danger { background: #b63f2d; }
 .timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
 .term-card { background: var(--cream); border: 1px solid var(--line); border-radius: 1rem; box-shadow: var(--shadow); padding: 1.3rem; }
 .term-card__header { display: flex; justify-content: space-between; gap: 1rem; align-items: start; }
@@ -80,8 +82,8 @@ legend { padding: 0 .3rem; font-family: Georgia, 'Times New Roman', serif; font-
 .quote strong { font-size: 1.1rem; }
 .quote small { color: #52665f; }
 
-.dialog-backdrop { position: fixed; inset: 0; display: grid; place-items: center; padding: 1rem; background: rgb(14 35 29 / .72); z-index: 10; }
-.dialog { width: min(31rem, 100%); background: var(--cream); border-radius: 1rem; box-shadow: 0 24px 80px rgb(0 0 0 / .28); padding: 1.5rem; }
+.dialog::backdrop { background: rgb(14 35 29 / .72); }
+.dialog { width: min(31rem, calc(100% - 2rem)); max-height: calc(100% - 2rem); border: 0; background: var(--cream); color: var(--ink); border-radius: 1rem; box-shadow: 0 24px 80px rgb(0 0 0 / .28); padding: 1.5rem; }
 .dialog__actions { display: flex; justify-content: end; gap: .7rem; margin-top: 1.4rem; }
 
 @media (max-width: 760px) {
