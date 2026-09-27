@@ -45,3 +45,11 @@ This public log records material assistance, decisions, corrections, and verific
 - Decisions preserved: the window has 31 inclusive dates; manual renewal can be unpaid; claims reset only on the successor; a cancelled successor is retained and never replaced.
 - Verification: 34 domain and 26 API/SQL integration tests passed in Release against SQL Server in Docker, exercising Card/DirectDebit/manual paths, invalid no-write cases, aggregate races, and injected later-write rollback.
 - Review decision: pending repository-owner review; PR 5 remains stacked on PR 4.
+
+## PR 6 — React UI
+
+- Task: implement an accessible, responsive demonstration for the complete policy lifecycle and add frontend CI.
+- Assistance: used official React/Vite/Playwright guidance and the UI-review workflow to design semantic forms, state/error handling, responsive styling, component tests, browser journeys, and rendered visual checks.
+- Corrections: used Vitest's typed config and excluded Playwright specs; aligned a browser assertion with the actual recalculation warning; added initial focus and focus return for cancellation confirmation.
+- Verification: production build, three component tests, and six desktop/mobile Playwright journeys passed; rendered captures were inspected; npm audit reported zero known vulnerabilities.
+- Review decision: pending repository-owner review; PR 6 remains stacked on PR 5.

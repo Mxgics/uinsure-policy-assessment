@@ -26,7 +26,7 @@ Status: sell/retrieve evidence is recorded below; later lifecycle and UI behavio
 | X2 | Automated tests | Executed local/CI results with named tests | 2–7 | In progress: local backend suites pass |
 | X3 | Informative responses | Consistent validation, 404, 409 and unexpected-error Problem Details | 2–5 | Verified locally |
 | X4 | Public GitHub repository | Public repository and reviewed PR links | 1–7 | In progress |
-| U1 | Small React demonstration | Accessible sell, find/view, quote/cancel and renew browser journeys | 6 | Pending |
+| U1 | Small React demonstration | Accessible sell, find/view, quote/cancel and renew browser journeys | 6 | Verified locally |
 | U2 | Real-project PRs, documentation and AI context | Reviewable PRs, aligned docs, concise AI log | 1–7 | In progress |
 
 ## Acceptance examples

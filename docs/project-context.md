@@ -2,7 +2,7 @@
 
 ## Current phase
 
-PR 5 completes the backend lifecycle on the PR 4 cancellation foundation. Renewal windows, paid/unpaid successors, predecessor integrity, rollback, and renew/renew plus cancel/renew races are verified against SQL Server. The demonstration frontend and final clean-clone review remain.
+PR 6 adds the responsive React policy desk on the complete PR 5 backend. Component and desktop/mobile browser-contract journeys cover sell, retrieve, quote/cancel, renewal, errors, and conflict refresh. Final clean-clone and whole-stack review remain in PR 7.
 
 After PR 1 merged, the owner approved a stacked workflow: PRs 2–7 are implemented continuously as dependent branches and reviewed/merged bottom-up.
 
