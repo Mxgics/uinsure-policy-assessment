@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Uinsure.Api.Errors;
 using Uinsure.Api.Persistence;
 using Uinsure.Api.Policies;
@@ -58,6 +59,7 @@ builder.Services.AddDbContext<UinsureDbContext>((services, options) =>
     }
 
     options.UseSqlServer(connectionString);
+    options.AddInterceptors(services.GetServices<IInterceptor>());
 });
 
 var app = builder.Build();

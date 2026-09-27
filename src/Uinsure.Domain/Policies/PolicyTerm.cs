@@ -16,6 +16,7 @@ public sealed class PolicyTerm
     public IReadOnlyCollection<PolicyholderSnapshot> Policyholders => _policyholders;
     public PropertySnapshot Property { get; private set; } = null!;
     public Payment? Payment { get; private set; }
+    public Cancellation? Cancellation { get; private set; }
 
     internal static PolicyTerm CreateInitial(
         Guid policyId,
@@ -39,6 +40,44 @@ public sealed class PolicyTerm
         return term;
     }
 
-    public PolicyState StateOn(DateOnly date) =>
-        date < StartDate ? PolicyState.Scheduled : date > EndDate ? PolicyState.Expired : PolicyState.Current;
+    internal Cancellation Cancel(DateOnly date, DateTimeOffset recordedAtUtc)
+    {
+        if (Cancellation is not null)
+        {
+            throw new DomainConflictException("The policy term has already been cancelled.");
+        }
+        if (date > EndDate)
+        {
+            throw new DomainConflictException("An expired policy term cannot be cancelled.");
+        }
+
+        var calculation = CancellationCalculator.Calculate(
+            StartDate,
+            EndDate,
+            Premium,
+            HasClaims,
+            Payment is null ? null : new RecordedPayment(Payment.Amount, Payment.Method),
+            date);
+        Cancellation = Uinsure.Domain.Policies.Cancellation.Create(Id, calculation, Payment, recordedAtUtc);
+        return Cancellation;
+    }
+
+    public CancellationCalculation QuoteCancellation(DateOnly date)
+    {
+        if (Cancellation is not null)
+        {
+            throw new DomainConflictException("The policy term has already been cancelled.");
+        }
+        return CancellationCalculator.Calculate(
+            StartDate,
+            EndDate,
+            Premium,
+            HasClaims,
+            Payment is null ? null : new RecordedPayment(Payment.Amount, Payment.Method),
+            date);
+    }
+
+    public PolicyState StateOn(DateOnly date) => Cancellation is not null
+        ? PolicyState.Cancelled
+        : date < StartDate ? PolicyState.Scheduled : date > EndDate ? PolicyState.Expired : PolicyState.Current;
 }

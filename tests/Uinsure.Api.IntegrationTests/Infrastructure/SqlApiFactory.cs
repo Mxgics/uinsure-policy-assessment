@@ -9,7 +9,8 @@ namespace Uinsure.Api.IntegrationTests.Infrastructure;
 
 public sealed class SqlApiFactory(
     string connectionString,
-    TimeProvider timeProvider) : WebApplicationFactory<Program>
+    TimeProvider timeProvider,
+    Action<IServiceCollection>? configureTestServices = null) : WebApplicationFactory<Program>
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -30,6 +31,7 @@ public sealed class SqlApiFactory(
         {
             services.RemoveAll<TimeProvider>();
             services.AddSingleton(timeProvider);
+            configureTestServices?.Invoke(services);
         });
     }
 }

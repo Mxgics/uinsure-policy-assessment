@@ -12,6 +12,25 @@ internal sealed class ApiExceptionHandler(IProblemDetailsService problemDetailsS
         Exception exception,
         CancellationToken cancellationToken)
     {
+        if (exception is DomainConflictException conflict)
+        {
+            httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
+            var conflictProblem = new ProblemDetails
+            {
+                Status = StatusCodes.Status409Conflict,
+                Title = "The requested change conflicts with current policy state.",
+                Detail = conflict.Message,
+                Type = "https://httpstatuses.com/409"
+            };
+            ApiProblemDetailsDefaults.AddExtensions(conflictProblem, httpContext, "policy_conflict");
+            return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
+            {
+                HttpContext = httpContext,
+                ProblemDetails = conflictProblem,
+                Exception = exception
+            });
+        }
+
         if (exception is not DomainValidationException validation)
         {
             return false;

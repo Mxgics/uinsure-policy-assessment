@@ -29,3 +29,11 @@ This public log records material assistance, decisions, corrections, and verific
 - Verification: 14 domain and 10 API/integration tests passed in Release against SQL Server in Docker.
 - Review decision: pending repository-owner review; PR 3 remains stacked on PR 2.
 - Remaining limits: lifecycle operations, conflict handling, browser workflows, and CI results belong to later work.
+
+## PR 4 — cancellation
+
+- Task: implement quote/execution, refunds, history, atomicity, and cancellation conflicts.
+- Assistance: translated the agreed examples into literal tests before the calculator, implemented the domain/persistence/API slice, and constructed real-SQL race and rollback checks.
+- Corrections: fixed an informational unused-day expectation; explicitly marked the new cancellation graph as added; narrowed duplicate-key conflict handling to the named cancellation index after the deterministic race exposed SQL command ordering.
+- Verification: 24 domain and 16 API/integration tests passed in Release against SQL Server in Docker, including two-connection concurrency and injected later-write rollback.
+- Review decision: pending repository-owner review; PR 4 remains stacked on PR 3.
