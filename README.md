@@ -2,7 +2,7 @@
 
 A small home-insurance policy API and React demonstration built as a technical assessment. It supports selling, retrieving, cancelling, and renewing Household and Buy to Let policies, with the optional cancellation rules and a focused browser UI.
 
-This repository is delivered through small stacked pull requests. PR 1 is merged; PRs 2–7 contain the API, SQL persistence, lifecycle behaviour, UI, and verification documentation and remain open for review.
+This repository is delivered through small stacked pull requests. PR 1 is merged; PRs 2–7 contain the API, SQL persistence, lifecycle behaviour, UI, and verification documentation and remain open for review. Delivery stage 8 is [PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9), with the final corrections and real browser-to-SQL verification. See the [review, testing and submission plan](docs/review-and-submission-plan.md).
 
 ## Run locally
 

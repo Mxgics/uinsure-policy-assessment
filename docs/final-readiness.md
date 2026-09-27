@@ -44,4 +44,4 @@ GitHub reported successful backend jobs on PRs 2–5 and successful backend plus
 
 ## Review order
 
-Review and merge [PR 2](https://github.com/Mxgics/uinsure-policy-assessment/pull/2), [PR 3](https://github.com/Mxgics/uinsure-policy-assessment/pull/3), [PR 4](https://github.com/Mxgics/uinsure-policy-assessment/pull/4), [PR 5](https://github.com/Mxgics/uinsure-policy-assessment/pull/5), PR 6, then PR 7 and PR 8. After each base merges, retarget the next PR to `main`. Do not merge a dependent PR before its base.
+Review and merge [PR 2](https://github.com/Mxgics/uinsure-policy-assessment/pull/2), [PR 3](https://github.com/Mxgics/uinsure-policy-assessment/pull/3), [PR 4](https://github.com/Mxgics/uinsure-policy-assessment/pull/4), [PR 5](https://github.com/Mxgics/uinsure-policy-assessment/pull/5), PR 6, then PR 7 and [GitHub PR #9 (delivery stage 8)](https://github.com/Mxgics/uinsure-policy-assessment/pull/9). Follow the [review and submission plan](review-and-submission-plan.md). After each base merges, retarget the next PR to `main`. Do not merge a dependent PR before its base.

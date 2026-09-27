@@ -1,6 +1,8 @@
 # PR 8: Review corrections and complete browser evidence
 
-Status: implemented and locally verified; clean-checkout/CI delivery evidence is recorded separately. Base: `codex/pr7-final-readiness` at `806ecab`. Branch: `codex/pr8-review-fixes`. No merge is authorized by this change.
+Delivery stage 8 is [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9). See the [owner review and submission plan](../review-and-submission-plan.md).
+
+Status: implemented and verified locally and in a clean checkout at `50f4151`; three-job CI passed on that commit. See [delivery evidence](../test-plan.md#clean-checkout-and-delivery-verification) and the live PR for final-head checks. Base: `codex/pr7-final-readiness` at `806ecab`. Branch: `codex/pr8-review-fixes`. No merge is authorized by this change.
 
 ## Problem and correction
 

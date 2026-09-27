@@ -2,7 +2,7 @@
 
 ## Current phase
 
-PR 8 on `codex/pr8-review-fixes`, based on PR 7 at `806ecab`, implements the nine review corrections and real browser-to-SQL verification. Local verification passed: 38 domain, 72 API/SQL, eight component, ten browser-contract and eight real full-stack checks. The [PR 8 note](changes/008-review-fixes.md) records corrections and evidence; final clean-checkout/CI results are recorded when executed. Owner review remains pending.
+PR 8 on `codex/pr8-review-fixes`, based on PR 7 at `806ecab`, implements the nine review corrections and real browser-to-SQL verification. Local verification passed: 38 domain, 72 API/SQL, eight component, ten browser-contract and eight real full-stack checks. The [PR 8 note](changes/008-review-fixes.md) records corrections and evidence; the same suites passed in a clean checkout at `50f4151`, with successful three-job CI. Delivery stage 8 is GitHub PR #9. See the [review and submission plan](review-and-submission-plan.md) for the owner checkpoint and final-head CI gate. Owner review remains pending.
 
 After PR 1 merged, the owner approved a stacked workflow: PRs 2–7 are implemented continuously as dependent branches and reviewed/merged bottom-up.
 

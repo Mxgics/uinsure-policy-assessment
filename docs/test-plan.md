@@ -104,3 +104,9 @@ Recorded failures/corrections: API red run 12 failed/13 passed, then the same 25
 Infrastructure interruption: the usage-limit pause was followed by Docker Desktop startup failure on stale runtime sockets. The verified socket-only directories were preserved outside the repository and the engine recovered without a data reset; Docker 29.7.2 then ran the SQL checks. A nullable test annotation, misplaced guard, temporary local-variable collision and TypeScript fixture inclusion were authoring/build corrections, not product regressions.
 
 Clean-checkout, repository privacy/link checks and final-head CI results are appended when executed. Private preparation updates remain outside the repository.
+
+### Clean-checkout and delivery verification
+
+On 2026-09-27, a separate local clone of `50f415146b14a1ace88e3e3374aab5f928784be7` passed the maintained backend gate (38 domain, 72 API/SQL; zero skips, build warnings or errors), `npm ci`, production build, eight component tests, ten intercepted browser tests, and eight real browser/API/SQL journeys with fresh SQL assertions and cleanup. Its working tree remained clean. Initial restricted-process attempts failed at restore and Vite child-process startup; rerunning with the required host access passed without changing code.
+
+[CI run 36335909255](https://github.com/Mxgics/uinsure-policy-assessment/actions/runs/36335909255) passed on that commit, including backend, frontend and fullstack jobs. The subsequent documentation-only delivery commit records these results and the [review/testing/submission plan](review-and-submission-plan.md); its own current-head CI result belongs in the live [PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) review checkpoint. The planned stage number remains 8.
