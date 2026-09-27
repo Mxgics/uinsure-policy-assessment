@@ -39,3 +39,13 @@ Tests fail rather than skip when Docker is unavailable. EF InMemory and SQLite a
 - HTTP/persistence: quote was read-only; execution recalculated and stored cancellation plus optional same-method refund; repeated/mismatched operations returned 409/404.
 - Concurrency: a deterministic two-context barrier produced one 201 and one 409 with one cancellation/refund and one policy revision.
 - Atomicity: a temporary SQL trigger failed the later refund write; a fresh context found no cancellation, no added refund, and no policy revision update. The trigger was removed in `finally`.
+
+## PR 5 evidence — 2026-09-26
+
+- Final Release suite: 34 domain tests and 26 API/SQL integration tests passed.
+- Test-first renewal cycle: new domain tests failed because renewal behaviour/types did not exist, then passed after implementation without expectation changes.
+- Domain: end-minus-31/end-minus-30/end/end-plus-1, snapshot copying, claims reset, paid automatic renewal, unpaid manual renewal, invalid payment combinations, and no replacement successor passed.
+- HTTP/SQL: Card and DirectDebit automatic successors were paid; manual successor was unpaid and cancelled with `NoPayment`; invalid combinations wrote no successor.
+- Integrity/history: duplicate renewal conflicted, active successor blocked parent cancellation, cancelled successor remained history, parent cancellation then succeeded, and replacement renewal remained blocked.
+- Concurrency: deterministic renew/renew and cancel/renew pairs each produced one 201 and one 409 with exactly one lifecycle effect.
+- Atomicity: an injected SQL payment-trigger failure left no successor and no policy revision update.

@@ -18,7 +18,9 @@ public sealed class LifecycleSaveBarrier : SaveChangesInterceptor
         var context = eventData.Context;
         if (context is not null &&
             context.ChangeTracker.Entries<Policy>().Any(entry => entry.State == EntityState.Modified) &&
-            context.ChangeTracker.Entries<Cancellation>().Any(entry => entry.State == EntityState.Added))
+            (context.ChangeTracker.Entries<Cancellation>().Any(entry => entry.State == EntityState.Added) ||
+             context.ChangeTracker.Entries<PolicyTerm>().Any(entry =>
+                 entry.State == EntityState.Added && entry.Entity.PredecessorTermId is not null)))
         {
             if (Interlocked.Increment(ref _arrivals) == 2)
             {
