@@ -31,6 +31,25 @@ describe('policy desk', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Check the reference and try again.')
   })
 
+  it.each([
+    ['a network failure', () => Promise.reject(new TypeError('Network failure'))],
+    ['an unusable success response', () => Promise.resolve(new Response('{}', { status: 201 }))],
+  ])('treats sale %s as uncertain without inviting a duplicate', async (_description, response) => {
+    const fetchMock = vi.fn().mockImplementation(response)
+    vi.stubGlobal('fetch', fetchMock)
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('First name'), { target: { value: 'Ada' } })
+
+    fireEvent.submit(screen.getByRole('button', { name: 'Create policy' }).closest('form')!)
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('Policy creation may have succeeded')
+    expect(alert).toHaveTextContent('do not resubmit')
+    expect(alert).not.toHaveTextContent('try again')
+    expect(screen.getByLabelText('First name')).toHaveValue('Ada')
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
   it('renders retrieved history and refreshes after a conflict', async () => {
     const fetchMock = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify(policy), { status: 200 }))

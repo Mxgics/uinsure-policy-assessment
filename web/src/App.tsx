@@ -56,7 +56,7 @@ export function App() {
     }
   }
 
-  async function run(action: () => Promise<void>, mutation = false, preserveNotice = false) {
+  async function run(action: () => Promise<void>, mutation: false | 'sale' | 'lifecycle' = false, preserveNotice = false) {
     if (busyRef.current) return
     busyRef.current = true
     setBusy(true)
@@ -67,7 +67,9 @@ export function App() {
     } catch (caught) {
       if (caught instanceof ApiError && caught.status === 409 && policy) {
         await refreshPolicy(policy.reference, errorText(caught))
-      } else if (mutation && (!(caught instanceof ApiError) || caught.status >= 500)) {
+      } else if (mutation === 'sale' && (!(caught instanceof ApiError) || caught.status >= 500)) {
+        setError('Policy creation may have succeeded, but no usable confirmation was received. Keep these details and do not resubmit: without a known reference, a second request could create a duplicate policy.')
+      } else if (mutation === 'lifecycle' && (!(caught instanceof ApiError) || caught.status >= 500)) {
         setStale(true)
         setQuotes({})
         setError('The outcome is uncertain. Refresh policy before making further changes; do not repeat the request.')
@@ -122,7 +124,7 @@ export function App() {
       setStale(false)
       setQuotes({})
       setNotice(`Policy ${created.reference} was created.`)
-    })
+    }, 'sale')
   }
 
   async function quote(term: PolicyTerm, event: FormEvent<HTMLFormElement>) {
@@ -142,12 +144,13 @@ export function App() {
     setConfirmTerm(null)
     await run(async () => {
       const result = await policyApi.cancel(policyReference, term.id)
+      // Keep the confirmed mutation visible even when the following GET cannot refresh it.
       setPolicy(current => current && ({ ...current, terms: current.terms.map(item => item.id === term.id
         ? { ...item, state: 'Cancelled', cancellation: result } : item) }))
       setQuotes({})
       setNotice('Cancellation recorded using a fresh calculation for today.')
       await refreshPolicy(policyReference)
-    }, true)
+    }, 'lifecycle')
     requestAnimationFrame(() => document.getElementById(`term-${term.id}`)?.focus())
   }
 
@@ -158,12 +161,13 @@ export function App() {
     const value = String(new FormData(event.currentTarget).get('renewalPayment') ?? '')
     await run(async () => {
       const successor = await policyApi.renew(policyReference, term.id, value || null)
+      // Keep the confirmed mutation visible even when the following GET cannot refresh it.
       setPolicy(current => current && ({ ...current,
         terms: [...current.terms.filter(item => item.id !== successor.id), successor] }))
       setQuotes({})
       setNotice('Renewal recorded and the new term is shown in the history.')
       await refreshPolicy(policyReference)
-    }, true)
+    }, 'lifecycle')
   }
 
   return (

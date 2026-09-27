@@ -46,6 +46,20 @@ public sealed class ApiContractTests(ApiFactory factory) : IClassFixture<ApiFact
         Assert.Contains("addressLine1", required);
         Assert.Contains("postcode", required);
         Assert.DoesNotContain("city", required);
+
+        var sale = schemas.GetProperty("SellPolicyRequest");
+        var saleRequired = sale.GetProperty("required").EnumerateArray()
+            .Select(v => v.GetString()!).ToArray();
+        Assert.Equal(
+            ["type", "startDate", "premium", "hasClaims", "autoRenew", "policyholders", "property", "paymentMethod"],
+            saleRequired);
+        foreach (var name in new[] { "startDate", "premium", "hasClaims", "autoRenew" })
+        {
+            var type = sale.GetProperty("properties").GetProperty(name).GetProperty("type");
+            Assert.DoesNotContain("null", type.ValueKind == JsonValueKind.Array
+                ? type.EnumerateArray().Select(value => value.GetString()!)
+                : [type.GetString()!]);
+        }
     }
 
     [Fact]

@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using System.Text.Json.Nodes;
 using Microsoft.OpenApi;
@@ -51,6 +52,11 @@ builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 
 builder.Services.AddOpenApi("v1", options => options.AddSchemaTransformer((schema, context, _) =>
 {
+    if (context.JsonPropertyInfo?.AttributeProvider?.IsDefined(typeof(RequiredAttribute), true) == true)
+    {
+        // Nullable CLR members detect omission during binding; [Required] defines the public non-null contract.
+        schema.Type &= ~JsonSchemaType.Null;
+    }
     var type = Nullable.GetUnderlyingType(context.JsonTypeInfo.Type) ?? context.JsonTypeInfo.Type;
     if (type == typeof(InsuranceType) || type == typeof(PaymentMethod))
     {
