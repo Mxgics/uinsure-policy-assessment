@@ -295,6 +295,7 @@ function Quote({ result }: { result: CancellationResult }) {
   return (
     <div className="quote" aria-label="Cancellation quote result">
       <strong>{formatMoney(result.refundAmount)} refund</strong>
+      <span>Calculated for {result.date}</span>
       <span>{result.reason} · {result.unusedDays} unused days</span>
       <small>Retained premium {formatMoney(result.retainedPremium)}; this is not an extra fee.</small>
     </div>
@@ -314,7 +315,7 @@ function SellForm({ onSubmit, busy }: { onSubmit: (event: FormEvent<HTMLFormElem
           <legend>Cover</legend>
           <label>Policy type<select name="type" defaultValue="Household"><option value="Household">Household</option><option value="BuyToLet">Buy to Let</option></select></label>
           <label>Start date<input name="startDate" type="date" defaultValue={today} required /></label>
-          <label>Annual premium (£)<input name="premium" type="number" min="0.01" step="0.01" defaultValue="365.00" required /></label>
+          <label>Annual premium (£)<input name="premium" type="number" min="0.01" max="90071992547409.90" step="0.01" defaultValue="365.00" required /></label>
           <label>Payment method<select name="paymentMethod" defaultValue="Card"><option>Card</option><option value="DirectDebit">Direct debit</option><option>Cheque</option></select></label>
           <label className="check"><input name="hasClaims" type="checkbox" /> This term has claims</label>
           <label className="check"><input name="autoRenew" type="checkbox" defaultChecked /> Auto-renew</label>

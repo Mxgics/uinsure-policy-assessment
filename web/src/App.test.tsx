@@ -16,6 +16,22 @@ describe('policy desk', () => {
     expect(screen.getByLabelText('Policy type')).toBeVisible()
     expect(screen.getByLabelText('First name')).toBeVisible()
     expect(screen.getByLabelText('Postcode')).toHaveAttribute('maxlength', '8')
+    expect(screen.getByLabelText('Annual premium (£)')).toHaveAttribute('max', '90071992547409.90')
+  })
+
+  it('presents the date returned with a cancellation quote', async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(policy)))
+      .mockResolvedValueOnce(new Response(JSON.stringify(quote)))
+    vi.stubGlobal('fetch', fetchMock)
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('Policy reference'), { target: { value: policy.reference } })
+    fireEvent.submit(screen.getByLabelText('Policy reference').closest('form')!)
+    await screen.findByRole('heading', { name: policy.reference })
+
+    fireEvent.submit(screen.getByRole('heading', { name: 'Cancellation estimate' }).closest('form')!)
+
+    expect(await screen.findByText(`Calculated for ${quote.date}`)).toBeVisible()
   })
 
   it('shows an informative API error in a live alert', async () => {
