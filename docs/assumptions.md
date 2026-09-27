@@ -2,6 +2,10 @@
 
 These decisions make ambiguous assessment wording executable. They are project conventions, not claims about insurance law or Uinsure production systems.
 
+## Property contract clarification - 2026-09-27
+
+The owner approved PR 8 to add Address Line 3, retain optional City, and remove Bedrooms. Only Address Line 1 and Postcode are required by the property contract. Optional blank lines/City normalize to null. Neither City nor Bedrooms is required by the assessment. The [property decision](decisions/002-property-contract-and-browser-evidence.md) supersedes the earlier optional-Bedrooms proposal and explains migration/compatibility consequences.
+
 ## Dates and eligibility
 
 - Capture UTC today once per operation through an injected `TimeProvider`. UTC is an assessment simplification.
@@ -13,9 +17,10 @@ These decisions make ambiguous assessment wording executable. They are project c
 ## Money and data normalisation
 
 - All money is GBP `decimal`/SQL `decimal(18,2)`. Submitted premiums are positive and have at most two meaningful fractional digits; do not silently round input.
+- Submitted premium cannot exceed `9999999999999999.99`. Normalized holder names are at most 100 characters, address lines 200, City 100, and Postcode 8; validate before SQL writes.
 - Round only the final refund to two places, away from zero. There are no fees, tax, instalments, or interest.
 - Trim required names/addresses; preserve meaningful internal content. Trim and uppercase postcodes, allow at most eight characters, and do not invent a restrictive postcode regex or external lookup.
-- Required booleans and enums cannot become valid through language defaults. JSON enums are strings; numeric or unknown values are rejected.
+- Required booleans and enums cannot become valid through language defaults. JSON enums accept one declared name after trimming, ignoring case; numeric, unknown and combined names are rejected. Responses use canonical names.
 
 ## Policy and term history
 

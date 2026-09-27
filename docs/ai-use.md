@@ -2,6 +2,8 @@
 
 This public log records material assistance, decisions, corrections, and verification without raw conversations, credentials, supplied documents, personal paths/data, or private interview preparation.
 
+Earlier PR sections preserve their original observations. Current review and delivery status is recorded in the dated follow-up below.
+
 ## PR 1 — project documentation foundation
 
 - Task: turn the reviewed plan into a public project brief, requirement matrix, assumptions, ADR, context/plan, and contribution conventions.
@@ -61,3 +63,21 @@ This public log records material assistance, decisions, corrections, and verific
 - Verification: locked restores, formatting, Release build, 34 domain tests, 26 SQL integration tests, frontend build, three component tests, six browser journeys, links, privacy patterns, PDF absence, whitespace, and Git cleanliness passed from the clone.
 - CI observation: PRs 2–5 backend and PR 6 backend/frontend jobs were successful; PR 7 CI is not predicted before its final push.
 - Review decision: pending repository-owner review; no PR is merged by this work.
+
+## Final review and explanation audit - 2026-09-27
+
+- Task: review current readiness and check that every PR has a separate explanation.
+- Assistance: compared local note-introduction commits with live metadata for PRs 1-7, checked CI results, traced remaining findings against unchanged code, and added a linked explanation index and review checkpoint.
+- Corrections: removed stale current-status claims, narrowed coverage claims to checked-in tests, clarified that City/Bedrooms are implementation additions, qualified prior UI accessibility claims, and corrected the explanation of the predecessor foreign-key guarantee.
+- Evidence limits: PR 3 has no recorded red/green chronology; historical evidence was not invented. PRs 2-7 have successful CI but remain open. The prior application's 34 domain/26 API/3 component/6 browser test results are historical at the unchanged baseline; this documentation audit did not rerun them.
+- Remaining work: all nine reproduced findings and the missing coverage remain open. The remediation plan is local proposed work, not implemented corrections. City/Bedrooms optionality is a planning default, not an owner decision.
+- Delivery: documentation changes only; no commits, pushes, PR edits, messages, or merges were performed during this audit.
+
+## PR 8 — review corrections and real browser evidence
+
+- Owner decisions: one correction PR above PR 7; remove Bedrooms, retain optional City, add Address Line 3; include real browser-to-SQL verification. No merge authorized.
+- Assistance: implemented validation, migration, UI recovery/modal/contrast, regression tests, test-only full-stack runner and CI job; updated public explanations and the separately maintained private preparation ledger.
+- Review corrections: preserved the observed failing cases; fixed custom-converter OpenAPI metadata, native backward-Tab wrapping, long-reference mobile overflow, and test/build authoring errors. Prior PR 3 TDD evidence was not manufactured.
+- Verification: maintained backend gate passed 38 domain and 72 API/SQL tests with a clean Release build; frontend build/eight component tests, ten intercepted browser tests and eight actual browser/API/SQL journeys passed. Desktop/mobile captures were inspected. Clean-checkout and final-head CI evidence are recorded separately.
+- Environment: Docker startup temporarily failed on stale runtime sockets after an interruption; preserved the verified socket-only directories and restored the engine. No database substitution or Docker data reset was used.
+- Limits: unauthenticated local assessment, recorded rather than settled payments, no sale idempotency or deployment. Bedrooms migration discards that column and refuses populated rollback. Historical review/verification entries remain dated observations.

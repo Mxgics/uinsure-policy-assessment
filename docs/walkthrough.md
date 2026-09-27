@@ -14,7 +14,8 @@ This path demonstrates the assessment without requiring knowledge of the impleme
 2. Reload it by reference. Explain that holder/property values are term snapshots and the stable policy reference owns ordered history.
 3. Request a hypothetical cancellation quote. Explain cooling-off precedence, unused-day calculation, final rounding, and that the quote writes nothing.
 4. Confirm cancellation. Explain the fresh calculation for today, optional same-method Refund row, one transaction, shared policy revision, and 409 conflict refresh.
-5. For renewal, use the automated/domain examples because a new same-day sale cannot naturally enter a historical renewal window. Explain inclusive end-minus-30 through end, automatic Card/DirectDebit versus manual unpaid renewal, copied snapshots, and claims reset.
+5. For renewal, start the disposable historical demo with `pwsh -File scripts/Test-FullStack.ps1 -Serve` and use a printed paid/manual fixture reference at `http://127.0.0.1:5174`. A new same-day sale cannot naturally enter its renewal window. Explain inclusive end-minus-30 through end, automatic Card/DirectDebit versus manual unpaid renewal, copied snapshots, and claims reset.
+6. Explain that Address Line 3 is retained in history, City is optional, and Bedrooms was removed after requirements review. A failed refresh following a confirmed mutation keeps success visible and requires GET-only recovery before another change.
 
 ## Navigate the implementation
 
@@ -24,6 +25,7 @@ This path demonstrates the assessment without requiring knowledge of the impleme
 - `tests/Uinsure.Domain.Tests`: fast literal boundary examples.
 - `tests/Uinsure.Api.IntegrationTests`: real SQL migrations, HTTP behaviour, rollback, and deterministic races.
 - `web/src`: typed fetch client and accessible workflow UI; `web/e2e` contains desktop/mobile browser contracts.
+- `tests/Uinsure.FullStack` and `web/fullstack`: actual browser/API/SQL journeys and fresh database verification, separate from mocked browser contracts.
 
 ## Decisions to understand
 

@@ -3,6 +3,10 @@
 - Date: 2026-09-26
 - Scope: stacked PR 7, based on PR 6
 
+## Subsequent review - 2026-09-27
+
+The [review audit](changes/review-checkpoint-2026-09-27.md) found nine issues at `806ecab`. PR 8 implements the corrections and closes the real-browser evidence gap. Its local gates passed: 38 domain, 72 API/SQL, eight component, ten mocked browser and eight real browser/API/SQL checks. See the [PR 8 note](changes/008-review-fixes.md) and latest [test evidence](test-plan.md) for clean-checkout/CI status. The original PR 7 observations below remain historical.
+
 ## Delivery state
 
 All agreed sell, retrieve, quote/cancel, renewal, SQL persistence, concurrency, rollback, and React demonstration scope is implemented on the stack. The [requirements matrix](requirements.md) links each behaviour to its evidence; [test evidence](test-plan.md) separates local, SQL-backed, browser-contract, and CI results.
@@ -35,9 +39,9 @@ GitHub reported successful backend jobs on PRs 2–5 and successful backend plus
 - UTC dates and the selected age/leap/renewal conventions are explicit assessment assumptions, not assertions about Uinsure production or insurance law.
 - Payments/refunds are recorded, not settled; manual renewal can therefore be stored unpaid.
 - Sale has no idempotency key. A client losing a successful response can create a second policy if it retries.
-- Browser journeys use deterministic intercepted API contracts. Real HTTP/SQL behaviour is tested below the browser boundary, not as a single full-stack browser suite.
+- Intercepted browser tests cover deterministic UI failures; PR 8 additionally executes real browser/API/SQL journeys. Chromium desktop/Pixel 7 are covered, not every browser or device.
 - No repository licence has been selected; normal copyright rules apply.
 
 ## Review order
 
-Review and merge [PR 2](https://github.com/Mxgics/uinsure-policy-assessment/pull/2), [PR 3](https://github.com/Mxgics/uinsure-policy-assessment/pull/3), [PR 4](https://github.com/Mxgics/uinsure-policy-assessment/pull/4), [PR 5](https://github.com/Mxgics/uinsure-policy-assessment/pull/5), PR 6, then PR 7. After each base merges, retarget the next PR to `main`. Do not merge a dependent PR before its base.
+Review and merge [PR 2](https://github.com/Mxgics/uinsure-policy-assessment/pull/2), [PR 3](https://github.com/Mxgics/uinsure-policy-assessment/pull/3), [PR 4](https://github.com/Mxgics/uinsure-policy-assessment/pull/4), [PR 5](https://github.com/Mxgics/uinsure-policy-assessment/pull/5), PR 6, then PR 7 and PR 8. After each base merges, retarget the next PR to `main`. Do not merge a dependent PR before its base.

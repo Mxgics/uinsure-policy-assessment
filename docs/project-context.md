@@ -2,7 +2,7 @@
 
 ## Current phase
 
-PR 7 is the final documentation-only readiness checkpoint on the complete PR 6 application. A fresh clone passed locked restores, formatting, Release build, all backend/frontend/browser tests, and repository privacy/link checks. Owner review and bottom-up merges remain.
+PR 8 on `codex/pr8-review-fixes`, based on PR 7 at `806ecab`, implements the nine review corrections and real browser-to-SQL verification. Local verification passed: 38 domain, 72 API/SQL, eight component, ten browser-contract and eight real full-stack checks. The [PR 8 note](changes/008-review-fixes.md) records corrections and evidence; final clean-checkout/CI results are recorded when executed. Owner review remains pending.
 
 After PR 1 merged, the owner approved a stacked workflow: PRs 2–7 are implemented continuously as dependent branches and reviewed/merged bottom-up.
 
@@ -30,7 +30,8 @@ The repository contains only public project material and synthetic examples. Sup
 
 ## Known unresolved issues
 
-- GitHub CI evidence is pending the PR 2 push.
-- Lifecycle behaviour and the browser app remain pending later stacked PRs.
+- PR 8 requires owner review and bottom-up merge after the original stack.
+- Bedrooms removal is intentionally data-losing for that column; the runbook documents backup and guarded rollback. City is optional and Address Line 3 is retained.
+- Historical PR 3 red/green chronology remains unavailable; it has not been invented.
 - A repository licence has not been selected.
-- PRs 2–6 reported successful applicable GitHub CI jobs when final readiness was prepared; PR 7's live CI result remains a review item.
+- Live GitHub inspection on 2026-09-27 found successful CI for PRs 2-7. PR 1 is merged; PRs 2-7 remain open for owner review and bottom-up merge.

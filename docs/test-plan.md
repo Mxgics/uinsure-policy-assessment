@@ -73,3 +73,34 @@ Fresh clone of remote branch `codex/pr7-final-readiness` at `ed1fc15`:
 - 127 tracked files were scanned: all relative Markdown links resolved, privacy/credential patterns were absent, no PDF was tracked, whitespace checks passed, and Git status was clean.
 
 GitHub check inspection showed successful backend jobs on PRs 2–5 and successful backend/frontend jobs on PR 6. PR 7 CI is checked at the review checkpoint after the final push.
+
+## Final review and documentation audit — 2026-09-27
+
+Application baseline remains `806ecab`; this audit changes documentation only. Earlier dated entries above describe their original checkpoints, including checks that were pending then.
+
+- Verified the exact project Git root and checked each PR explanation's introduction commit. All PRs 1–7 have notes; PRs 2–3 share one checkpoint in the separately maintained private ledger.
+- Inspected live PR and workflow metadata: PR 1 is merged; PRs 2–7 remain open with successful CI on their recorded heads. Run links are in the dated review checkpoint. Those runs do not validate the local uncommitted documentation.
+- Checked 25 repository Markdown files and 54 local file links: no unresolved file targets. This check does not validate heading anchors or external URLs.
+- Checked the separate private planning/preparation pack: 16 Markdown files and 31 local links resolved. Updated its stale status and added the final findings, per-PR decisions/trade-offs, evidence limits, and rehearsal prompts. Private content remains outside the repository.
+- Repository scans found no tracked PDFs or matches for the selected private-path, supplied-document-name, recruiter-text, interview-ledger-link, and credential patterns. This is a targeted pattern check, not a comprehensive secret audit.
+- Git diff whitespace checks and a trailing-whitespace scan of all 14 changed/new Markdown files passed. No application or test source files changed.
+- The preceding application review at the same baseline passed the maintained backend script (34 domain and 26 API/SQL tests, Release build with zero warnings/errors) and frontend build, three component tests and six intercepted browser journeys. Additional diagnostic probes reproduced nine findings outside that passing coverage.
+
+Application suites were not rerun for these documentation edits. No new business behaviour, test-first cycle, full-stack browser journey, fix, merge, or submission is claimed. The remediation plan remains unimplemented; the review checkpoint qualifies earlier readiness and accessibility claims.
+
+## PR 8 correction evidence — 2026-09-27
+
+The preceding audit is historical. PR 8 implements its corrections. Evidence below is from executed local commands, not inherited PR 7 CI:
+
+- `pwsh -File scripts/Test-Local.ps1`: locked tool/package restores, formatting, Release build with zero warnings/errors, **38 domain and 72 API/SQL tests passed**, no skips.
+- Real SQL coverage includes empty/populated property migration, retained data, guarded rollback error 51002, strict enum/normalized limits/no-write validation, all three refund methods, holder/date boundaries, and the existing race/rollback suite.
+- `npm run build` and `npm test -- --reporter=dot` from `web/`: TypeScript/browser-config compilation, production build, **eight component tests passed**.
+- `npm run test:e2e`: **ten intercepted desktop/mobile Chromium checks passed**, including focus containment/dismissal/restoration, rendered destructive-text contrast and long-reference layout/action reachability.
+- `pwsh -File scripts/Test-FullStack.ps1`: **eight real desktop/mobile journeys passed**, with no API interception. Fresh SQL reads confirmed original payments, cancellation/refund linkage and amount, automatic/manual renewal payment choices, history, copied Address Line 3 and policy revisions. The runner stopped its processes and disposed SQL after the run.
+- Inspected desktop/mobile full-page captures and the repaired long-reference mobile layout. No overflow or clipped controls was observed in those views. This is scoped visual evidence, not certification of every browser or all accessibility criteria.
+
+Recorded failures/corrections: API red run 12 failed/13 passed, then the same 25 passed; property/isolation red run three failed; UI red run four failed/two passed. Later checks found an OpenAPI integer-schema regression, native backward-Tab wrapping, and long-reference mobile action obstruction; each was corrected and rerun. Full-stack initially passed six/failed two mobile renewal journeys; after wrapping long references it passed all eight. The layout assertion was also tightened to the configured viewport width, since mobile `innerWidth` can expand with overflow.
+
+Infrastructure interruption: the usage-limit pause was followed by Docker Desktop startup failure on stale runtime sockets. The verified socket-only directories were preserved outside the repository and the engine recovered without a data reset; Docker 29.7.2 then ran the SQL checks. A nullable test annotation, misplaced guard, temporary local-variable collision and TypeScript fixture inclusion were authoring/build corrections, not product regressions.
+
+Clean-checkout, repository privacy/link checks and final-head CI results are appended when executed. Private preparation updates remain outside the repository.
