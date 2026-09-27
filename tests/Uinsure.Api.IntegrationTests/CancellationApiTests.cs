@@ -10,10 +10,21 @@ namespace Uinsure.Api.IntegrationTests;
 
 public sealed class CancellationApiTests(SqlServerFixture sql) : IClassFixture<SqlServerFixture>
 {
-    [Fact]
-    public async Task Quote_is_read_only_and_execution_recalculates_and_persists_history()
+    [Theory]
+    [InlineData("Card")]
+    [InlineData("DirectDebit")]
+    [InlineData("Cheque")]
+    public async Task Quote_is_read_only_and_execution_recalculates_and_persists_history(string method)
     {
-        var sold = await SellAsync(new DateTimeOffset(2026, 10, 1, 9, 0, 0, TimeSpan.Zero));
+        var unrelated = await SellAsync(new DateTimeOffset(2026, 10, 1, 9, 0, 0, TimeSpan.Zero), hasClaims: true);
+        await using (var setupFactory = Factory(new DateTimeOffset(2026, 10, 5, 9, 0, 0, TimeSpan.Zero)))
+        using (var setupClient = setupFactory.CreateClient())
+        {
+            var setupResponse = await setupClient.PostAsync(
+                $"/api/policies/{unrelated.Reference}/terms/{unrelated.TermId}/cancellations", null);
+            Assert.Equal(HttpStatusCode.Created, setupResponse.StatusCode);
+        }
+        var sold = await SellAsync(new DateTimeOffset(2026, 10, 1, 9, 0, 0, TimeSpan.Zero), paymentMethod: method);
         long revisionBefore;
         await using (var before = sql.CreateContext())
         {
@@ -34,7 +45,9 @@ public sealed class CancellationApiTests(SqlServerFixture sql) : IClassFixture<S
 
         await using (var afterQuote = sql.CreateContext())
         {
-            Assert.Equal(0, await afterQuote.Cancellations.CountAsync());
+            Assert.Equal(0, await afterQuote.Cancellations.CountAsync(c => c.PolicyTermId == sold.TermId));
+            Assert.False(await afterQuote.Refunds.AnyAsync(r => afterQuote.Payments
+                .Any(p => p.Id == r.PaymentId && p.PolicyTermId == sold.TermId)));
             Assert.Equal(revisionBefore, await afterQuote.Policies
                 .Where(policy => policy.Reference == sold.Reference)
                 .Select(policy => policy.MutationRevision)
@@ -49,7 +62,7 @@ public sealed class CancellationApiTests(SqlServerFixture sql) : IClassFixture<S
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
         var applied = await response.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal(351m, applied.GetProperty("refundAmount").GetDecimal());
-        Assert.Equal("Card", applied.GetProperty("method").GetString());
+        Assert.Equal(method, applied.GetProperty("method").GetString());
         Assert.Equal($"/api/policies/{sold.Reference}/terms/{sold.TermId}", response.Headers.Location?.AbsolutePath);
 
         var second = await cancelClient.PostAsync(
@@ -63,7 +76,11 @@ public sealed class CancellationApiTests(SqlServerFixture sql) : IClassFixture<S
 
         await using var after = sql.CreateContext();
         Assert.Equal(1, await after.Cancellations.CountAsync(item => item.PolicyTermId == sold.TermId));
-        Assert.Equal(1, await after.Refunds.CountAsync(refund => refund.Amount == 351m));
+        var payment = await after.Payments.SingleAsync(p => p.PolicyTermId == sold.TermId);
+        var refund = await after.Refunds.SingleAsync(r => r.PaymentId == payment.Id);
+        Assert.Equal(351m, refund.Amount);
+        Assert.Equal(method, refund.Method.ToString());
+        Assert.Equal(payment.Method, refund.Method);
         Assert.Equal(revisionBefore + 1, await after.Policies
             .Where(policy => policy.Reference == sold.Reference)
             .Select(policy => policy.MutationRevision)
@@ -191,7 +208,7 @@ public sealed class CancellationApiTests(SqlServerFixture sql) : IClassFixture<S
 
     private SqlApiFactory Factory(DateTimeOffset now) => new(sql.ConnectionString, new FixedTimeProvider(now));
 
-    private async Task<(string Reference, Guid TermId)> SellAsync(DateTimeOffset now, bool hasClaims = false)
+    private async Task<(string Reference, Guid TermId)> SellAsync(DateTimeOffset now, bool hasClaims = false, string paymentMethod = "Card")
     {
         await using var factory = Factory(now);
         using var client = factory.CreateClient();
@@ -204,7 +221,7 @@ public sealed class CancellationApiTests(SqlServerFixture sql) : IClassFixture<S
             autoRenew = true,
             policyholders = new[] { new { firstName = "A", lastName = "B", dateOfBirth = "1990-01-01" } },
             property = new { addressLine1 = "1 Road", city = "Town", postcode = "M1 1AA", bedrooms = 2 },
-            paymentMethod = "Card"
+            paymentMethod
         });
         response.EnsureSuccessStatusCode();
         var created = await response.Content.ReadFromJsonAsync<JsonElement>();

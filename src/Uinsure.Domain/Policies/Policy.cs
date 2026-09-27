@@ -94,15 +94,17 @@ public sealed class Policy
     private static Dictionary<string, string[]> Validate(SellPolicyData data, DateOnly today)
     {
         var errors = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
+        if (!Enum.IsDefined(data.Type)) errors["type"] = ["Unsupported insurance type."];
+        if (!Enum.IsDefined(data.PaymentMethod)) errors["paymentMethod"] = ["Unsupported payment method."];
         var latestStart = today.AddDays(60);
         if (data.StartDate < today || data.StartDate > latestStart)
         {
             errors["startDate"] = ["Start date must be from today through 60 days ahead."];
         }
 
-        if (data.Premium <= 0 || decimal.Round(data.Premium, 2) != data.Premium)
+        if (data.Premium <= 0 || data.Premium > PolicyLimits.MaximumPremium || decimal.Round(data.Premium, 2) != data.Premium)
         {
-            errors["premium"] = ["Premium must be positive with no more than two decimal places."];
+            errors["premium"] = ["Premium must be from 0.01 to 9999999999999999.99 with no more than two decimal places."];
         }
 
         if (data.Policyholders.Count is < 1 or > 3)
@@ -113,6 +115,8 @@ public sealed class Policy
         for (var index = 0; index < data.Policyholders.Count; index++)
         {
             var holder = data.Policyholders[index];
+            ValidateLength(errors, $"policyholders[{index}].firstName", holder.FirstName, PolicyLimits.Name);
+            ValidateLength(errors, $"policyholders[{index}].lastName", holder.LastName, PolicyLimits.Name);
             if (string.IsNullOrWhiteSpace(holder.FirstName) || string.IsNullOrWhiteSpace(holder.LastName))
             {
                 errors[$"policyholders[{index}].name"] = ["First and last name are required."];
@@ -123,18 +127,18 @@ public sealed class Policy
             }
         }
 
-        if (string.IsNullOrWhiteSpace(data.Property.AddressLine1) || string.IsNullOrWhiteSpace(data.Property.City))
+        if (string.IsNullOrWhiteSpace(data.Property.AddressLine1))
         {
-            errors["property.address"] = ["Address line 1 and city are required."];
+            errors["property.addressLine1"] = ["Address line 1 is required."];
         }
-        var postcode = data.Property.Postcode.Trim();
-        if (postcode.Length is < 1 or > 8)
+        ValidateLength(errors, "property.addressLine1", data.Property.AddressLine1, PolicyLimits.AddressLine);
+        ValidateLength(errors, "property.addressLine2", data.Property.AddressLine2, PolicyLimits.AddressLine);
+        ValidateLength(errors, "property.addressLine3", data.Property.AddressLine3, PolicyLimits.AddressLine);
+        ValidateLength(errors, "property.city", data.Property.City, PolicyLimits.City);
+        var postcode = data.Property.Postcode.Trim().ToUpperInvariant();
+        if (postcode.Length < 1 || postcode.Length > PolicyLimits.Postcode)
         {
             errors["property.postcode"] = ["Postcode is required and must be at most eight characters."];
-        }
-        if (data.Property.Bedrooms <= 0)
-        {
-            errors["property.bedrooms"] = ["Bedrooms must be positive."];
         }
 
         return errors;
@@ -150,5 +154,11 @@ public sealed class Policy
         {
             return false;
         }
+    }
+
+    private static void ValidateLength(Dictionary<string, string[]> errors, string field, string? value, int maximum)
+    {
+        if (value?.Trim().Length > maximum)
+            errors[field] = [$"Must be at most {maximum} characters after trimming."];
     }
 }

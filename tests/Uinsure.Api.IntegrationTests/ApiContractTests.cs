@@ -30,6 +30,25 @@ public sealed class ApiContractTests(ApiFactory factory) : IClassFixture<ApiFact
     }
 
     [Fact]
+    public async Task OpenApi_preserves_named_enums_and_the_property_contract()
+    {
+        var document = await _client.GetFromJsonAsync<JsonElement>("/openapi/v1.json");
+        var schemas = document.GetProperty("components").GetProperty("schemas");
+        var payment = schemas.GetProperty("PaymentMethod");
+        Assert.Equal("string", payment.GetProperty("type").GetString());
+        Assert.Equal(new[] { "Card", "DirectDebit", "Cheque" }, payment.GetProperty("enum")
+            .EnumerateArray().Select(v => v.GetString()).ToArray());
+        Assert.Equal("string", schemas.GetProperty("InsuranceType").GetProperty("type").GetString());
+        var property = schemas.GetProperty("PropertyRequest");
+        Assert.True(property.GetProperty("properties").TryGetProperty("addressLine3", out _));
+        Assert.False(property.GetProperty("properties").TryGetProperty("bedrooms", out _));
+        var required = property.GetProperty("required").EnumerateArray().Select(v => v.GetString()).ToArray();
+        Assert.Contains("addressLine1", required);
+        Assert.Contains("postcode", required);
+        Assert.DoesNotContain("city", required);
+    }
+
+    [Fact]
     public async Task Automatic_validation_uses_the_shared_problem_contract()
     {
         var response = await _client.PostAsJsonAsync(

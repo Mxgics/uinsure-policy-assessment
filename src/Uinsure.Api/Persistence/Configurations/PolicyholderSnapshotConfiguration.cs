@@ -10,8 +10,8 @@ public sealed class PolicyholderSnapshotConfiguration : IEntityTypeConfiguration
     {
         builder.ToTable("Policyholders");
         builder.HasKey(holder => holder.Id);
-        builder.Property(holder => holder.FirstName).HasMaxLength(100).IsRequired();
-        builder.Property(holder => holder.LastName).HasMaxLength(100).IsRequired();
+        builder.Property(holder => holder.FirstName).HasMaxLength(PolicyLimits.Name).IsRequired();
+        builder.Property(holder => holder.LastName).HasMaxLength(PolicyLimits.Name).IsRequired();
         builder.Property(holder => holder.DateOfBirth).HasColumnType("date");
     }
 }

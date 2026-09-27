@@ -8,13 +8,13 @@ public sealed class PropertySnapshotConfiguration : IEntityTypeConfiguration<Pro
 {
     public void Configure(EntityTypeBuilder<PropertySnapshot> builder)
     {
-        builder.ToTable("Properties", table =>
-            table.HasCheckConstraint("CK_Properties_PositiveBedrooms", "[Bedrooms] > 0"));
+        builder.ToTable("Properties");
         builder.HasKey(property => property.Id);
         builder.HasIndex(property => property.PolicyTermId).IsUnique();
-        builder.Property(property => property.AddressLine1).HasMaxLength(200).IsRequired();
-        builder.Property(property => property.AddressLine2).HasMaxLength(200);
-        builder.Property(property => property.City).HasMaxLength(100).IsRequired();
-        builder.Property(property => property.Postcode).HasMaxLength(8).IsRequired();
+        builder.Property(property => property.AddressLine1).HasMaxLength(PolicyLimits.AddressLine).IsRequired();
+        builder.Property(property => property.AddressLine2).HasMaxLength(PolicyLimits.AddressLine);
+        builder.Property(property => property.AddressLine3).HasMaxLength(PolicyLimits.AddressLine);
+        builder.Property(property => property.City).HasMaxLength(PolicyLimits.City);
+        builder.Property(property => property.Postcode).HasMaxLength(PolicyLimits.Postcode).IsRequired();
     }
 }

@@ -29,11 +29,10 @@ public sealed class PropertyRequest
     [Required]
     public string? AddressLine1 { get; init; }
     public string? AddressLine2 { get; init; }
-    [Required]
+    public string? AddressLine3 { get; init; }
     public string? City { get; init; }
     [Required]
     public string? Postcode { get; init; }
-    public int? Bedrooms { get; init; }
 }
 
 public sealed record RenewPolicyRequest(PaymentMethod? PaymentMethod);

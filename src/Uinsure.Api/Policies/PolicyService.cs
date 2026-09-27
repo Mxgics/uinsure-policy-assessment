@@ -184,15 +184,15 @@ public sealed class PolicyService(
         {
             for (var index = 0; index < request.Policyholders.Count; index++)
             {
-                if (request.Policyholders[index].DateOfBirth is null)
+                if (request.Policyholders[index] is null)
+                {
+                    errors[$"policyholders[{index}]"] = ["A policyholder must not be null."];
+                }
+                else if (request.Policyholders[index].DateOfBirth is null)
                 {
                     errors[$"policyholders[{index}].dateOfBirth"] = ["Date of birth is required."];
                 }
             }
-        }
-        if (request.Property is not null && request.Property.Bedrooms is null)
-        {
-            errors["property.bedrooms"] = ["Bedrooms is required."];
         }
         if (errors.Count > 0) throw new DomainValidationException(errors);
 
@@ -209,9 +209,9 @@ public sealed class PolicyService(
             new PropertyData(
                 request.Property!.AddressLine1 ?? string.Empty,
                 request.Property.AddressLine2,
-                request.Property.City ?? string.Empty,
-                request.Property.Postcode ?? string.Empty,
-                request.Property.Bedrooms!.Value),
+                request.Property.AddressLine3,
+                request.Property.City,
+                request.Property.Postcode ?? string.Empty),
             request.PaymentMethod!.Value);
     }
 
@@ -241,9 +241,9 @@ public sealed class PolicyService(
         new PropertyResponse(
             term.Property.AddressLine1,
             term.Property.AddressLine2,
+            term.Property.AddressLine3,
             term.Property.City,
-            term.Property.Postcode,
-            term.Property.Bedrooms),
+            term.Property.Postcode),
         term.Payment is null ? null : new PaymentResponse(
             term.Payment.Reference,
             term.Payment.Method,

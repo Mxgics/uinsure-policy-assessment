@@ -104,7 +104,7 @@ public sealed class PolicyRenewalTests
             hasClaims,
             autoRenew,
             [new PolicyholderData("A", "B", new DateOnly(1990, 1, 1))],
-            new PropertyData("1 Road", null, "Town", "M1 1AA", 2),
+            new PropertyData("1 Road", null, null, "Town", "M1 1AA"),
             PaymentMethod.Card),
         new DateOnly(2026, 10, 1),
         DateTimeOffset.UtcNow);
