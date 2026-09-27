@@ -53,3 +53,11 @@ This public log records material assistance, decisions, corrections, and verific
 - Corrections: used Vitest's typed config and excluded Playwright specs; aligned a browser assertion with the actual recalculation warning; added initial focus and focus return for cancellation confirmation.
 - Verification: production build, three component tests, and six desktop/mobile Playwright journeys passed; rendered captures were inspected; npm audit reported zero known vulnerabilities.
 - Review decision: pending repository-owner review; PR 6 remains stacked on PR 5.
+
+## PR 7 — final readiness
+
+- Task: reconcile final evidence, walkthrough, limitations, public-information boundary, and merge order.
+- Assistance: generated the reviewer path, found and corrected stale review-workflow/runtime-status wording, executed a genuine fresh-clone verification, and queried live GitHub checks without exposing credentials.
+- Verification: locked restores, formatting, Release build, 34 domain tests, 26 SQL integration tests, frontend build, three component tests, six browser journeys, links, privacy patterns, PDF absence, whitespace, and Git cleanliness passed from the clone.
+- CI observation: PRs 2–5 backend and PR 6 backend/frontend jobs were successful; PR 7 CI is not predicted before its final push.
+- Review decision: pending repository-owner review; no PR is merged by this work.

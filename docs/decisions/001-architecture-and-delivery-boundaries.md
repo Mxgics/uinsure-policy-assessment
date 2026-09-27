@@ -1,6 +1,6 @@
 # ADR 001: Local modular monolith with SQL Server persistence
 
-- Status: Accepted for implementation; runtime evidence pending
+- Status: Accepted and locally verified
 - Date: 2026-09-26
 - Decision owners: repository owner, informed by the reviewed assessment plan
 
@@ -22,7 +22,7 @@ Build a local modular monolith on .NET 10:
 - Normal mutations use one `SaveChangesAsync`; the parent policy revision/rowversion is updated for cancellation and renewal so aggregate races share an optimistic-concurrency boundary.
 - GitHub Actions provides CI only. It does not imply deployment, Azure, or production readiness.
 
-Use .NET 10 because it is the agreed stack and is an active LTS release. The installed SDK baseline is `10.0.400`; PR 2 will pin an installed compatible SDK and exact supported packages. Use Node 24 LTS for frontend tooling. Resolve and lock exact dependencies once the projects exist.
+Use .NET 10 because it is the agreed stack and is an active LTS release. The SDK is pinned to `10.0.400`; packages, the SQL image, and CI actions are locked exactly. Node `24.19.0` is pinned for frontend tooling.
 
 ## Alternatives considered
 
