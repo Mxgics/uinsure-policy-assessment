@@ -60,3 +60,60 @@ Use the restore/format/build/test commands in `.github/workflows/ci.yml` for Lin
 - Locked restore fails: dependency declarations and committed lockfiles differ; regenerate intentionally and review the full graph/advisories.
 
 Ordinary API startup never migrates automatically. Stop the API, correct configuration/engine health, rerun the explicit migration, and restart. The PR 2 migration is schema-empty by design; later schema migrations document their own compatibility and rollback.
+
+## Synthetic HTTP walkthrough
+
+With `Start-Local.ps1` running, these PowerShell examples reuse the server-created reference and term identifier:
+
+```powershell
+$base = 'http://127.0.0.1:5080'
+$today = [DateTime]::UtcNow.ToString('yyyy-MM-dd')
+$sale = @{
+  type = 'Household'; startDate = $today; premium = 365.00
+  hasClaims = $false; autoRenew = $true; paymentMethod = 'Card'
+  policyholders = @(@{ firstName = 'Ada'; lastName = 'Example'; dateOfBirth = '1990-01-01' })
+  property = @{ addressLine1 = '1 Synthetic Road'; addressLine2 = $null; addressLine3 = 'Third line'; city = $null; postcode = 'M1 1AA' }
+} | ConvertTo-Json -Depth 4
+$created = Invoke-RestMethod "$base/api/policies" -Method Post -ContentType 'application/json' -Body $sale
+$reference = $created.reference
+$termId = $created.terms[0].id
+$policy = Invoke-RestMethod "$base/api/policies/$reference"
+$quote = Invoke-RestMethod "$base/api/policies/$reference/terms/$termId/cancellation-quote?date=$today"
+$cancelled = Invoke-RestMethod "$base/api/policies/$reference/terms/$termId/cancellations" -Method Post
+```
+
+A same-day sale is not in its renewal window. Start the disposable historical demonstration below, take a printed paid or manual `$reference` and `$termId`, then call:
+
+```powershell
+$base = 'http://127.0.0.1:5081'
+$renewed = Invoke-RestMethod "$base/api/policies/$reference/terms/$termId/renewals" -Method Post -ContentType 'application/json' -Body '{"paymentMethod":"Card"}'
+# For a printed manual fixture use: -Body '{"paymentMethod":null}'
+```
+
+Use only synthetic values. Cancellation changes state, so create another disposable policy when repeating the example.
+
+## Delivery-stage 8 property migration
+
+`AlignPropertyContract` adds optional Address Line 3, makes City nullable, and removes Bedrooms. Stop the application and back up any retained database before using the explicit migration script. Bedroom values are deliberately discarded; all other property/history/financial values are preserved. Existing clients must tolerate nullable City and the removed Bedrooms response member.
+
+Reverse migration is permitted only when `Properties` is empty. SQL error 51002 refuses a populated rollback before altering the schema. Recover the prior application/schema from a pre-upgrade backup when needed; do not fabricate bedroom values. Ordinary startup still does not migrate.
+
+## Real browser-to-SQL verification and historical demo
+
+Install frontend dependencies and Chromium once from `web/` with `npm ci` and `npx playwright install chromium` (Linux CI uses `--with-deps`). From the repository root run:
+
+```powershell
+pwsh -File scripts/Test-FullStack.ps1
+```
+
+This builds the solution and owns a disposable SQL Server container, explicit migrations, synthetic fixtures, the real API on `127.0.0.1:5081`, Vite on `127.0.0.1:5174`, and Playwright. Existing listeners cause failure; no running developer server or persistent demo database is reused. After browser journeys, fresh EF contexts verify payments, refunds, successor history and policy revisions. The API uses its ordinary system clock. A UTC date change fails the run and requires fresh fixtures.
+
+For a manual historical-policy demonstration:
+
+```powershell
+pwsh -File scripts/Test-FullStack.ps1 -Serve
+```
+
+Open `http://127.0.0.1:5174` and use the printed synthetic references. Each viewport's fixture set contains paid/manual renewal candidates, day-15 cancellation, claims, and a leap-year example. Ctrl+C stops the owned processes and disposes the database. Synthetic manifests, receipts and redacted process logs remain in ignored `TestResults/fullstack-*`; browser traces/screenshots use ignored `web/test-results`. Connection credentials are not written into the fixture manifest or frontend configuration.
+
+The real suite is separate from `npm run test:e2e`, whose intercepted responses remain useful for deterministic UI failures. Both are required by CI. If Docker startup fails, restore a working Linux engine and rerun; a different database or a skipped suite is not a substitute.

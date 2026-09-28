@@ -18,6 +18,7 @@ public static class CancellationCalculator
             });
         }
 
+        // Coverage dates are inclusive, so use the following day as the arithmetic boundary.
         var endExclusive = endDate.AddDays(1);
         var totalDays = endExclusive.DayNumber - startDate.DayNumber;
         var usedDays = Math.Clamp(cancellationDate.DayNumber - startDate.DayNumber, 0, totalDays);
@@ -44,6 +45,7 @@ public static class CancellationCalculator
         }
 
         var calculated = payment.Amount * unusedDays / totalDays;
+        // Keep full precision through the pro-rata calculation and round the final refund exactly once.
         var refund = Math.Clamp(RoundRefund(calculated), 0m, payment.Amount);
         return Result(refund, payment.Amount - refund, payment.Method, CancellationReason.ProRata);
 

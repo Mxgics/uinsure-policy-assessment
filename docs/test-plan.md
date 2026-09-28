@@ -73,3 +73,89 @@ Fresh clone of remote branch `codex/pr7-final-readiness` at `ed1fc15`:
 - 127 tracked files were scanned: all relative Markdown links resolved, privacy/credential patterns were absent, no PDF was tracked, whitespace checks passed, and Git status was clean.
 
 GitHub check inspection showed successful backend jobs on PRs 2–5 and successful backend/frontend jobs on PR 6. PR 7 CI is checked at the review checkpoint after the final push.
+
+## Final review and documentation audit — 2026-09-27
+
+Application baseline remains `806ecab`; this audit changes documentation only. Earlier dated entries above describe their original checkpoints, including checks that were pending then.
+
+- Verified the exact project Git root and checked each PR explanation's introduction commit. All PRs 1–7 have notes; PRs 2–3 share one checkpoint in the separately maintained private ledger.
+- Inspected live PR and workflow metadata: PR 1 is merged; PRs 2–7 remain open with successful CI on their recorded heads. Run links are in the dated review checkpoint. Those runs do not validate the local uncommitted documentation.
+- Checked 25 repository Markdown files and 54 local file links: no unresolved file targets. This check does not validate heading anchors or external URLs.
+- Checked the separate private planning/preparation pack: 16 Markdown files and 31 local links resolved. Updated its stale status and added the final findings, per-PR decisions/trade-offs, evidence limits, and rehearsal prompts. Private content remains outside the repository.
+- Repository scans found no tracked PDFs or matches for the selected private-path, supplied-document-name, recruiter-text, interview-ledger-link, and credential patterns. This is a targeted pattern check, not a comprehensive secret audit.
+- Git diff whitespace checks and a trailing-whitespace scan of all 14 changed/new Markdown files passed. No application or test source files changed.
+- The preceding application review at the same baseline passed the maintained backend script (34 domain and 26 API/SQL tests, Release build with zero warnings/errors) and frontend build, three component tests and six intercepted browser journeys. Additional diagnostic probes reproduced nine findings outside that passing coverage.
+
+Application suites were not rerun for these documentation edits. No new business behaviour, test-first cycle, full-stack browser journey, fix, merge, or submission is claimed. The remediation plan remains unimplemented; the review checkpoint qualifies earlier readiness and accessibility claims.
+
+## PR 8 correction evidence — 2026-09-27
+
+The preceding audit is historical. PR 8 implements its corrections. Evidence below is from executed local commands, not inherited PR 7 CI:
+
+- `pwsh -File scripts/Test-Local.ps1`: locked tool/package restores, formatting, Release build with zero warnings/errors, **38 domain and 72 API/SQL tests passed**, no skips.
+- Real SQL coverage includes empty/populated property migration, retained data, guarded rollback error 51002, strict enum/normalized limits/no-write validation, all three refund methods, holder/date boundaries, and the existing race/rollback suite.
+- `npm run build` and `npm test -- --reporter=dot` from `web/`: TypeScript/browser-config compilation, production build, **eight component tests passed**.
+- `npm run test:e2e`: **ten intercepted desktop/mobile Chromium checks passed**, including focus containment/dismissal/restoration, rendered destructive-text contrast and long-reference layout/action reachability.
+- `pwsh -File scripts/Test-FullStack.ps1`: **eight real desktop/mobile journeys passed**, with no API interception. Fresh SQL reads confirmed original payments, cancellation/refund linkage and amount, automatic/manual renewal payment choices, history, copied Address Line 3 and policy revisions. The runner stopped its processes and disposed SQL after the run.
+- Inspected desktop/mobile full-page captures and the repaired long-reference mobile layout. No overflow or clipped controls was observed in those views. This is scoped visual evidence, not certification of every browser or all accessibility criteria.
+
+Recorded failures/corrections: API red run 12 failed/13 passed, then the same 25 passed; property/isolation red run three failed; UI red run four failed/two passed. Later checks found an OpenAPI integer-schema regression, native backward-Tab wrapping, and long-reference mobile action obstruction; each was corrected and rerun. Full-stack initially passed six/failed two mobile renewal journeys; after wrapping long references it passed all eight. The layout assertion was also tightened to the configured viewport width, since mobile `innerWidth` can expand with overflow.
+
+Infrastructure interruption: the usage-limit pause was followed by Docker Desktop startup failure on stale runtime sockets. The verified socket-only directories were preserved outside the repository and the engine recovered without a data reset; Docker 29.7.2 then ran the SQL checks. A nullable test annotation, misplaced guard, temporary local-variable collision and TypeScript fixture inclusion were authoring/build corrections, not product regressions.
+
+Clean-checkout, repository privacy/link checks and final-head CI results are appended when executed. Private preparation updates remain outside the repository.
+
+### Clean-checkout and delivery verification
+
+On 2026-09-27, a separate local clone of `50f415146b14a1ace88e3e3374aab5f928784be7` passed the maintained backend gate (38 domain, 72 API/SQL; zero skips, build warnings or errors), `npm ci`, production build, eight component tests, ten intercepted browser tests, and eight real browser/API/SQL journeys with fresh SQL assertions and cleanup. Its working tree remained clean. Initial restricted-process attempts failed at restore and Vite child-process startup; rerunning with the required host access passed without changing code.
+
+[CI run 36335909255](https://github.com/Mxgics/uinsure-policy-assessment/actions/runs/36335909255) passed on that commit, including backend, frontend and fullstack jobs. The subsequent documentation-only delivery commit records these results and the [review/testing/submission plan](review-and-submission-plan.md); its own current-head CI result belongs in the live [PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) review checkpoint. The planned stage number remains 8.
+
+## Repaired PR #9 coherence evidence — 2026-09-27
+
+Historical counts above are not current-candidate results. The repaired branch added genuine red/green regressions before its final complete gates:
+
+- Frontend red: six failures reproduced invalid/empty/unusable success bodies, malformed error bodies, uncertain-sale retry wording, and unusable sale success; the focused rerun passed 14/14 after the response-boundary fix.
+- OpenAPI red: the sale schema had no `required` set; after required/non-null schema correction the isolated test passed 1/1.
+- UI red: quote date was absent and the premium input had no JavaScript-safe upper bound; the focused rerun passed 15/15 across the component and API-boundary files.
+- The first sandboxed Vite run failed to spawn its helper; the authorized host rerun produced the behavioural red evidence. An initial isolated .NET invocation hung before output and was terminated; the host run then exposed a test compilation correction before the genuine schema failure. Neither infrastructure attempt is counted as a passing test.
+
+The final maintained backend, frontend, mocked-browser and fullstack commands remain to be recorded below after they run from a clean checkout of the exact candidate. Current-head CI is also pending; older green stage 8 runs do not satisfy that gate.
+
+### Checkpoint documentation review — 2026-09-27
+
+At local HEAD `76abadb7ac9495bf55f30fffc483d4e72b902ede`, reviewed the uncommitted explanatory comments and delivery status. Live GitHub metadata showed PR #9 already targets `main`, but its remote head remains `5b3c79f1af74192ed7d1ef99703c3dc81b1e2534` and is reported unmergeable. Publishing the local repair and updating the obsolete PR description remain pending.
+
+Checked 94 local Markdown file targets across public README/contribution/docs and the separate private question pack: none were unresolved. Anchors and external URLs were not validated. `git diff --check` passed; Git reported line-ending normalization notices for two commented source files. All 64 private core question headings remain present. No application suite, full privacy/secret scan, rendered review or migration exercise was executed in this documentation review; final candidate gates above remain pending.
+
+## Final candidate clean-checkout verification — 2026-09-28
+
+A separate local clone of `27095955ee04dc1681fd04742ee79d4f68c6b284` passed:
+
+- `pwsh -File scripts/Test-Local.ps1`: locked restores, non-mutating formatting, Release build with zero warnings/errors, **38 domain and 72 API/SQL integration tests**, zero skips.
+- `npm ci`: 153 packages audited, zero reported vulnerabilities. `npm run build` and `npm test`: production build and **15 component/API-boundary tests** passed.
+- Chromium installation and `npm run test:e2e`: **10 intercepted desktop/mobile browser checks** passed, including modal keyboard containment, dismissal, focus restoration, destructive-text contrast and long-reference layout.
+- `pwsh -File scripts/Test-FullStack.ps1`: **8 actual desktop/mobile browser/API/SQL journeys** passed, followed by fresh SQL financial/history assertions and owned-process/container cleanup.
+- `pwsh -File scripts/Test-FullStack.ps1 -Serve`: disposable historical demo started. The runbook HTTP payloads, using its API port, sold/retrieved/quoted/cancelled a synthetic policy (GBP 365 same-day refund); paid and manual historical fixtures renewed with Recorded/NotRecorded payment states respectively. Ctrl+C ran cleanup; both application ports were no longer listening. The PTY wrapper returned exit 1 on interruption, so normal wrapper exit success is not claimed.
+- Additional real-demo keyboard checks at 1280×900 and 412×915: Tab/Enter lookup, reachable cancellation trigger, initial Keep term focus, backward/forward modal wrapping, Escape/focus return and no horizontal overflow. Reduced-motion preference was enabled. Desktop/mobile screenshots, including long references and the dialog, were inspected with no clipped controls observed. This is scoped Chromium evidence, not comprehensive accessibility certification.
+- The backend gate exercised `Property_upgrade_preserves_history_and_refuses_lossy_rollback`: empty reversal, populated upgrade with retained property/holder/payment data, and populated rollback rejection 51002 with state preserved. A production backup restore drill was not performed.
+- The clone and source working trees were clean before this evidence-only update. Scans covered **146 tracked files, 29 Markdown files and 73 local Markdown targets**: no broken file targets, forbidden generated/private file types, or selected private-path/credential-pattern hits. Diff whitespace checks passed. External links/anchors and exhaustive secret detection are not claimed.
+
+### Gate failures and corrections
+
+The first clean gate stopped at formatting for the newly inserted expression-body comments; moving them above the methods fixed it (`e877c0e`). The next backend run passed 38 domain and 71 integration tests but failed the existing missing-boolean field-key regression: new Required annotations used CLR property names. The smallest correction registers the framework JSON validation metadata provider, preserving the existing camel-case error contract and required OpenAPI metadata. The frontend production build also exposed an overly strict generic type on a partial error matcher; removing that generic retained the assertions and fixed compilation. Both corrections are in `2709595`; complete gates above passed afterward. These are observed failures, not retroactively invented test-first steps. No further refactor was needed.
+
+The field-name correction follows the official [JSON validation metadata provider](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.modelbinding.metadata.systemtextjsonvalidationmetadataprovider?view=aspnetcore-10.0). CI for the final documentation head is checked separately after normal push. Owner review, authorized merge and final-main verification remain outstanding.
+
+## Error-handling refactor verification — 2026-09-28
+
+The owner requested a focused readability follow-up to `1f7615c`. Before production edits, the existing API/SQL suite passed 72/72 and frontend tests passed 15/15. Added three HTTP 500 characterization cases (sale, renewal, cancellation); the unchanged implementation passed all 18 frontend tests. No failing business behaviour or artificial red cycle is claimed.
+
+After refactoring the backend exception switch/shared writer and frontend named recovery helper:
+
+- `pwsh -File scripts/Test-Local.ps1` passed locked restores, formatting, Release build (zero warnings/errors), **38 domain and 72 real API/SQL tests**, zero skips. Existing validation/conflict/unknown-exception contracts remained green.
+- `npm run build`, `npm test`, and `npm run test:e2e` passed: **18 frontend tests and 10 mocked desktop/mobile browser checks**.
+- `pwsh -File scripts/Test-FullStack.ps1` passed **8 real browser/API/SQL journeys**, fresh SQL assertions and owned-process/container cleanup.
+- `git diff --check` passed. These runs used the working checkout; the earlier separate clean-checkout/manual demo evidence remains its dated checkpoint. No rendered styles or migrations changed in this follow-up.
+
+The new final head supersedes the previous review candidate. All three CI jobs must pass on that exact pushed head; the result is recorded in the live PR description. Owner review, explicit merge authorization and final-main verification remain outstanding.

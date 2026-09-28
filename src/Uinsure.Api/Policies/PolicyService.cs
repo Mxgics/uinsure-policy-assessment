@@ -135,10 +135,12 @@ public sealed class PolicyService(
         return MapTerm(successor, DateOnly.FromDateTime(now.UtcDateTime));
     }
 
+    // Only the named invariant collision is an expected race; unrelated SQL failures must remain 500s.
     private static bool IsCancellationConstraintConflict(DbUpdateException exception) =>
         exception.InnerException is SqlException { Number: 2601 or 2627 } sqlException &&
         sqlException.Message.Contains("IX_Cancellations_PolicyTermId", StringComparison.Ordinal);
 
+    // Only the named invariant collision is an expected race; unrelated SQL failures must remain 500s.
     private static bool IsRenewalConstraintConflict(DbUpdateException exception) =>
         exception.InnerException is SqlException { Number: 2601 or 2627 } sqlException &&
         sqlException.Message.Contains("IX_PolicyTerms_PredecessorTermId", StringComparison.Ordinal);
@@ -184,15 +186,15 @@ public sealed class PolicyService(
         {
             for (var index = 0; index < request.Policyholders.Count; index++)
             {
-                if (request.Policyholders[index].DateOfBirth is null)
+                if (request.Policyholders[index] is null)
+                {
+                    errors[$"policyholders[{index}]"] = ["A policyholder must not be null."];
+                }
+                else if (request.Policyholders[index].DateOfBirth is null)
                 {
                     errors[$"policyholders[{index}].dateOfBirth"] = ["Date of birth is required."];
                 }
             }
-        }
-        if (request.Property is not null && request.Property.Bedrooms is null)
-        {
-            errors["property.bedrooms"] = ["Bedrooms is required."];
         }
         if (errors.Count > 0) throw new DomainValidationException(errors);
 
@@ -209,9 +211,9 @@ public sealed class PolicyService(
             new PropertyData(
                 request.Property!.AddressLine1 ?? string.Empty,
                 request.Property.AddressLine2,
-                request.Property.City ?? string.Empty,
-                request.Property.Postcode ?? string.Empty,
-                request.Property.Bedrooms!.Value),
+                request.Property.AddressLine3,
+                request.Property.City,
+                request.Property.Postcode ?? string.Empty),
             request.PaymentMethod!.Value);
     }
 
@@ -241,9 +243,9 @@ public sealed class PolicyService(
         new PropertyResponse(
             term.Property.AddressLine1,
             term.Property.AddressLine2,
+            term.Property.AddressLine3,
             term.Property.City,
-            term.Property.Postcode,
-            term.Property.Bedrooms),
+            term.Property.Postcode),
         term.Payment is null ? null : new PaymentResponse(
             term.Payment.Reference,
             term.Payment.Method,

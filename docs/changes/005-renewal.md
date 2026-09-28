@@ -7,7 +7,9 @@
 
 The API now renews an eligible term from inclusive end-minus-30 through end date. A successor retains policy/type, premium, auto-renew preference, holder/property snapshots, and the policy reference; it starts after the prior inclusive end, receives a new identifier, and resets claims. Automatic renewal requires Card or DirectDebit and records a payment; manual renewal rejects a supplied method and remains explicitly unpaid.
 
-Predecessor identity is stored with the policy identity and backed by a composite foreign key, preventing a cross-policy predecessor. A filtered unique predecessor index prevents duplicate successors. A term that ever had a successor cannot be renewed again. A non-cancelled successor blocks cancellation of its parent; cancelling the successor first permits parent cancellation without erasing history.
+Domain renewal sets the successor and predecessor policy identities from the same aggregate. A composite foreign key verifies the referenced predecessor ID/policy pair. A filtered unique predecessor index prevents duplicate successors. A term that ever had a successor cannot be renewed again. A non-cancelled successor blocks cancellation of its parent; cancelling the successor first permits parent cancellation without erasing history.
+
+Review clarification (2026-09-27): the earlier wording overstated the database guarantee. The foreign key alone does not enforce equality between a child's `PolicyId` and `PredecessorPolicyId`; that equality is supplied by domain construction. No additional SQL constraint or direct-write regression has been added by this documentation correction.
 
 ## Test-first evidence and corrections
 

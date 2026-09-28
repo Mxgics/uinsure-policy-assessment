@@ -30,9 +30,9 @@ public sealed record PolicyholderResponse(
 public sealed record PropertyResponse(
     string AddressLine1,
     string? AddressLine2,
-    string City,
-    string Postcode,
-    int Bedrooms);
+    string? AddressLine3,
+    string? City,
+    string Postcode);
 
 public sealed record PaymentResponse(
     string Reference,

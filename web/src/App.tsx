@@ -18,21 +18,20 @@ export function App() {
   const [policy, setPolicy] = useState<Policy | null>(null)
   const [reference, setReference] = useState('')
   const [busy, setBusy] = useState(false)
+  const busyRef = useRef(false)
+  const [stale, setStale] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [quotes, setQuotes] = useState<Record<string, CancellationResult>>({})
   const [confirmTerm, setConfirmTerm] = useState<PolicyTerm | null>(null)
-  const confirmButtonRef = useRef<HTMLButtonElement>(null)
+  const keepButtonRef = useRef<HTMLButtonElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const cancelTriggerRef = useRef<HTMLButtonElement | null>(null)
 
   useEffect(() => {
     if (!confirmTerm) return
-    confirmButtonRef.current?.focus()
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') closeDialog()
-    }
-    document.addEventListener('keydown', onKeyDown)
-    return () => document.removeEventListener('keydown', onKeyDown)
+    if (dialogRef.current && !dialogRef.current.open) dialogRef.current.showModal()
+    keepButtonRef.current?.focus()
   }, [confirmTerm])
 
   function closeDialog() {
@@ -45,23 +44,57 @@ export function App() {
     [policy],
   )
 
-  async function run(action: () => Promise<void>, conflictMessage?: string) {
-    if (busy) return
+  async function refreshPolicy(policyReference: string, prefix = '') {
+    setQuotes({})
+    try {
+      setPolicy(await policyApi.get(policyReference))
+      setStale(false)
+      setError(prefix ? `${prefix} The latest state is now shown.` : '')
+    } catch {
+      setStale(true)
+      setError(`${prefix} Refresh failed. Refresh policy before making further changes.`.trim())
+    }
+  }
+
+  async function handleActionError(caught: unknown, mutation: false | 'sale' | 'lifecycle') {
+    if (caught instanceof ApiError && caught.status === 409 && policy) {
+      await refreshPolicy(policy.reference, errorText(caught))
+      return
+    }
+
+    const outcomeIsUncertain = !(caught instanceof ApiError) || caught.status >= 500
+    if (!outcomeIsUncertain) {
+      setError(errorText(caught))
+      return
+    }
+
+    switch (mutation) {
+      case 'sale':
+        setError('Policy creation may have succeeded, but no usable confirmation was received. Keep these details and do not resubmit: without a known reference, a second request could create a duplicate policy.')
+        return
+      case 'lifecycle':
+        setStale(true)
+        setQuotes({})
+        setError('The outcome is uncertain. Refresh policy before making further changes; do not repeat the request.')
+        return
+      default:
+        setError(errorText(caught))
+    }
+  }
+
+  async function run(action: () => Promise<void>, mutation: false | 'sale' | 'lifecycle' = false, preserveNotice = false) {
+    if (busyRef.current) return
+    busyRef.current = true
     setBusy(true)
     setError('')
-    setNotice('')
+    if (!preserveNotice) setNotice('')
     try {
       await action()
     } catch (caught) {
-      if (caught instanceof ApiError && caught.status === 409 && policy) {
-        const refreshed = await policyApi.get(policy.reference).catch(() => null)
-        if (refreshed) setPolicy(refreshed)
-        setError(conflictMessage ?? 'The policy changed. The latest state is now shown.')
-      } else {
-        setError(errorText(caught))
-      }
+      await handleActionError(caught, mutation)
     } finally {
       setBusy(false)
+      busyRef.current = false
     }
   }
 
@@ -71,6 +104,8 @@ export function App() {
       const found = await policyApi.get(reference)
       setPolicy(found)
       setReference(found.reference)
+      setQuotes({})
+      setStale(false)
       setNotice(`Loaded ${found.reference}.`)
     })
   }
@@ -91,10 +126,10 @@ export function App() {
       }],
       property: {
         addressLine1: String(form.get('addressLine1')),
-        addressLine2: null,
-        city: String(form.get('city')),
+        addressLine2: String(form.get('addressLine2')).trim() || null,
+        addressLine3: String(form.get('addressLine3')).trim() || null,
+        city: String(form.get('city')).trim() || null,
         postcode: String(form.get('postcode')),
-        bedrooms: Number(form.get('bedrooms')),
       },
       paymentMethod: form.get('paymentMethod') as PaymentMethod,
     }
@@ -102,8 +137,10 @@ export function App() {
       const created = await policyApi.sell(input)
       setPolicy(created)
       setReference(created.reference)
+      setStale(false)
+      setQuotes({})
       setNotice(`Policy ${created.reference} was created.`)
-    })
+    }, 'sale')
   }
 
   async function quote(term: PolicyTerm, event: FormEvent<HTMLFormElement>) {
@@ -117,24 +154,36 @@ export function App() {
   }
 
   async function cancelConfirmed() {
-    if (!policy || !confirmTerm) return
+    if (!policy || !confirmTerm || stale || busyRef.current) return
     const term = confirmTerm
+    const policyReference = policy.reference
     setConfirmTerm(null)
     await run(async () => {
-      await policyApi.cancel(policy.reference, term.id)
-      setPolicy(await policyApi.get(policy.reference))
+      const result = await policyApi.cancel(policyReference, term.id)
+      // Keep the confirmed mutation visible even when the following GET cannot refresh it.
+      setPolicy(current => current && ({ ...current, terms: current.terms.map(item => item.id === term.id
+        ? { ...item, state: 'Cancelled', cancellation: result } : item) }))
+      setQuotes({})
       setNotice('Cancellation recorded using a fresh calculation for today.')
-    }, 'Cancellation was not applied because the policy changed. The latest state is shown.')
+      await refreshPolicy(policyReference)
+    }, 'lifecycle')
+    requestAnimationFrame(() => document.getElementById(`term-${term.id}`)?.focus())
   }
 
   async function renew(term: PolicyTerm, event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (!policy || stale) return
+    const policyReference = policy.reference
     const value = String(new FormData(event.currentTarget).get('renewalPayment') ?? '')
     await run(async () => {
-      await policyApi.renew(policy!.reference, term.id, value || null)
-      setPolicy(await policyApi.get(policy!.reference))
+      const successor = await policyApi.renew(policyReference, term.id, value || null)
+      // Keep the confirmed mutation visible even when the following GET cannot refresh it.
+      setPolicy(current => current && ({ ...current,
+        terms: [...current.terms.filter(item => item.id !== successor.id), successor] }))
+      setQuotes({})
       setNotice('Renewal recorded and the new term is shown in the history.')
-    }, 'Renewal was not applied because the policy changed. The latest state is shown.')
+      await refreshPolicy(policyReference)
+    }, 'lifecycle')
   }
 
   return (
@@ -159,7 +208,7 @@ export function App() {
           <form className="find-form" onSubmit={findPolicy}>
             <label htmlFor="reference">Policy reference</label>
             <div className="inline-control">
-              <input id="reference" value={reference} onChange={event => setReference(event.target.value)} required placeholder="POL-…" />
+              <input id="reference" disabled={busy} value={reference} onChange={event => setReference(event.target.value)} required placeholder="POL-…" />
               <button disabled={busy}>Find policy</button>
             </div>
           </form>
@@ -168,6 +217,7 @@ export function App() {
         <div className="status-stack" aria-live="polite" aria-atomic="true">
           {error && <div className="alert alert--error" role="alert">{error}</div>}
           {notice && <div className="alert alert--success">{notice}</div>}
+          {stale && policy && <button disabled={busy} onClick={() => run(() => refreshPolicy(policy.reference), false, true)}>Refresh policy</button>}
         </div>
 
         {!policy ? <SellForm onSubmit={sellPolicy} busy={busy} /> : (
@@ -177,7 +227,7 @@ export function App() {
                 <p className="section-kicker">{policy.type === 'BuyToLet' ? 'Buy to Let' : 'Household'}</p>
                 <h2 id="policy-heading">{policy.reference}</h2>
               </div>
-              <button className="button--quiet" onClick={() => { setPolicy(null); setQuotes({}); setNotice('') }}>Sell another policy</button>
+              <button disabled={busy} className="button--quiet" onClick={() => { setPolicy(null); setQuotes({}); setNotice(''); setError(''); setStale(false) }}>Sell another policy</button>
             </div>
             <ol className="timeline" aria-label="Policy term history">
               {sortedTerms.map((term, index) => (
@@ -185,7 +235,7 @@ export function App() {
                   <div className="term-card__header">
                     <div>
                       <p className="term-index">Term {index + 1}</p>
-                      <h3>{term.startDate} <span aria-hidden="true">→</span> {term.endDate}</h3>
+                      <h3 id={`term-${term.id}`} tabIndex={-1}>{term.startDate} <span aria-hidden="true">→</span> {term.endDate}</h3>
                     </div>
                     <span className={`state state--${term.state.toLowerCase()}`}>{term.state}</span>
                   </div>
@@ -193,7 +243,7 @@ export function App() {
                     <div><dt>Premium</dt><dd>{formatMoney(term.premium)}</dd></div>
                     <div><dt>Payment</dt><dd>{term.paymentState}</dd></div>
                     <div><dt>Claims</dt><dd>{term.hasClaims ? 'Recorded' : 'None'}</dd></div>
-                    <div><dt>Property</dt><dd>{term.property.postcode} · {term.property.bedrooms} bed</dd></div>
+                    <div><dt>Property</dt><dd>{[term.property.addressLine1, term.property.addressLine2, term.property.addressLine3, term.property.city, term.property.postcode].filter(Boolean).join(', ')}</dd></div>
                   </dl>
                   {term.cancellation && (
                     <div className="history-note">Cancelled {term.cancellation.date}; refund {formatMoney(term.cancellation.refundAmount)} ({term.cancellation.reason}).</div>
@@ -205,9 +255,9 @@ export function App() {
                         <p>Hypothetical only. Confirmation always recalculates for today.</p>
                         <label htmlFor={`quote-${term.id}`}>Quote date</label>
                         <input id={`quote-${term.id}`} name="quoteDate" type="date" defaultValue={today} required />
-                        <button className="button--secondary" disabled={busy}>Get quote</button>
+                        <button className="button--secondary" disabled={busy || stale}>Get quote</button>
                         {quotes[term.id] && <Quote result={quotes[term.id]} />}
-                        <button type="button" className="button--danger" disabled={busy} onClick={event => {
+                        <button type="button" className="button--danger" disabled={busy || stale} onClick={event => {
                           cancelTriggerRef.current = event.currentTarget
                           setConfirmTerm(term)
                         }}>Cancel policy term</button>
@@ -224,7 +274,7 @@ export function App() {
                             </select>
                           </>
                         ) : <input type="hidden" name="renewalPayment" value="" />}
-                        <button disabled={busy}>Renew term</button>
+                        <button disabled={busy || stale}>Renew term</button>
                       </form>
                     </div>
                   )}
@@ -236,17 +286,22 @@ export function App() {
       </main>
 
       {confirmTerm && (
-        <div className="dialog-backdrop">
-          <section role="dialog" aria-modal="true" aria-labelledby="confirm-title" className="dialog">
+          <dialog ref={dialogRef} aria-labelledby="confirm-title" className="dialog" onCancel={event => { event.preventDefault(); closeDialog() }} onClose={closeDialog}
+            onKeyDown={event => {
+              if (event.key !== 'Tab') return
+              const buttons = event.currentTarget.querySelectorAll<HTMLButtonElement>('button:not(:disabled)')
+              const first = buttons[0], last = buttons[buttons.length - 1]
+              if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
+              else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+            }}>
             <p className="section-kicker">Irreversible demo action</p>
             <h2 id="confirm-title">Cancel this policy term?</h2>
             <p>The API will calculate today’s result again. A previous quote is not a guarantee.</p>
             <div className="dialog__actions">
-              <button className="button--quiet" onClick={closeDialog}>Keep term</button>
-              <button ref={confirmButtonRef} className="button--danger" onClick={cancelConfirmed}>Confirm cancellation</button>
+              <button ref={keepButtonRef} className="button--quiet" onClick={closeDialog}>Keep term</button>
+              <button disabled={busy} className="button--danger" onClick={cancelConfirmed}>Confirm cancellation</button>
             </div>
-          </section>
-        </div>
+          </dialog>
       )}
     </>
   )
@@ -256,6 +311,7 @@ function Quote({ result }: { result: CancellationResult }) {
   return (
     <div className="quote" aria-label="Cancellation quote result">
       <strong>{formatMoney(result.refundAmount)} refund</strong>
+      <span>Calculated for {result.date}</span>
       <span>{result.reason} · {result.unusedDays} unused days</span>
       <small>Retained premium {formatMoney(result.retainedPremium)}; this is not an extra fee.</small>
     </div>
@@ -275,23 +331,24 @@ function SellForm({ onSubmit, busy }: { onSubmit: (event: FormEvent<HTMLFormElem
           <legend>Cover</legend>
           <label>Policy type<select name="type" defaultValue="Household"><option value="Household">Household</option><option value="BuyToLet">Buy to Let</option></select></label>
           <label>Start date<input name="startDate" type="date" defaultValue={today} required /></label>
-          <label>Annual premium (£)<input name="premium" type="number" min="0.01" step="0.01" defaultValue="365.00" required /></label>
+          <label>Annual premium (£)<input name="premium" type="number" min="0.01" max="90071992547409.90" step="0.01" defaultValue="365.00" required /></label>
           <label>Payment method<select name="paymentMethod" defaultValue="Card"><option>Card</option><option value="DirectDebit">Direct debit</option><option>Cheque</option></select></label>
           <label className="check"><input name="hasClaims" type="checkbox" /> This term has claims</label>
           <label className="check"><input name="autoRenew" type="checkbox" defaultChecked /> Auto-renew</label>
         </fieldset>
         <fieldset>
           <legend>Policyholder</legend>
-          <label>First name<input name="firstName" autoComplete="given-name" required /></label>
-          <label>Last name<input name="lastName" autoComplete="family-name" required /></label>
+          <label>First name<input name="firstName" maxLength={100} autoComplete="given-name" required /></label>
+          <label>Last name<input name="lastName" maxLength={100} autoComplete="family-name" required /></label>
           <label>Date of birth<input name="dateOfBirth" type="date" required /></label>
         </fieldset>
         <fieldset>
           <legend>Property</legend>
-          <label>Address line 1<input name="addressLine1" autoComplete="address-line1" required /></label>
-          <label>Town or city<input name="city" autoComplete="address-level2" required /></label>
+          <label>Address line 1<input name="addressLine1" maxLength={200} autoComplete="address-line1" required /></label>
+          <label>Address line 2<input name="addressLine2" maxLength={200} autoComplete="address-line2" /></label>
+          <label>Address line 3<input name="addressLine3" maxLength={200} autoComplete="address-line3" /></label>
+          <label>Town or city<input name="city" maxLength={100} autoComplete="address-level2" /></label>
           <label>Postcode<input name="postcode" autoComplete="postal-code" maxLength={8} required /></label>
-          <label>Bedrooms<input name="bedrooms" type="number" min="1" defaultValue="3" required /></label>
         </fieldset>
         <button className="sell-submit" disabled={busy}>{busy ? 'Creating…' : 'Create policy'}</button>
       </form>

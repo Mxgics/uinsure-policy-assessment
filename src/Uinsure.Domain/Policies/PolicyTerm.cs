@@ -69,9 +69,9 @@ public sealed class PolicyTerm
         term.Property = PropertySnapshot.Create(term.Id, new PropertyData(
             predecessor.Property.AddressLine1,
             predecessor.Property.AddressLine2,
+            predecessor.Property.AddressLine3,
             predecessor.Property.City,
-            predecessor.Property.Postcode,
-            predecessor.Property.Bedrooms));
+            predecessor.Property.Postcode));
         if (paymentMethod is not null)
         {
             term.Payment = Payment.Create(term.Id, term.Premium, paymentMethod.Value, recordedAtUtc);

@@ -30,6 +30,39 @@ public sealed class ApiContractTests(ApiFactory factory) : IClassFixture<ApiFact
     }
 
     [Fact]
+    public async Task OpenApi_preserves_named_enums_and_the_property_contract()
+    {
+        var document = await _client.GetFromJsonAsync<JsonElement>("/openapi/v1.json");
+        var schemas = document.GetProperty("components").GetProperty("schemas");
+        var payment = schemas.GetProperty("PaymentMethod");
+        Assert.Equal("string", payment.GetProperty("type").GetString());
+        Assert.Equal(new[] { "Card", "DirectDebit", "Cheque" }, payment.GetProperty("enum")
+            .EnumerateArray().Select(v => v.GetString()).ToArray());
+        Assert.Equal("string", schemas.GetProperty("InsuranceType").GetProperty("type").GetString());
+        var property = schemas.GetProperty("PropertyRequest");
+        Assert.True(property.GetProperty("properties").TryGetProperty("addressLine3", out _));
+        Assert.False(property.GetProperty("properties").TryGetProperty("bedrooms", out _));
+        var required = property.GetProperty("required").EnumerateArray().Select(v => v.GetString()).ToArray();
+        Assert.Contains("addressLine1", required);
+        Assert.Contains("postcode", required);
+        Assert.DoesNotContain("city", required);
+
+        var sale = schemas.GetProperty("SellPolicyRequest");
+        var saleRequired = sale.GetProperty("required").EnumerateArray()
+            .Select(v => v.GetString()!).ToArray();
+        Assert.Equal(
+            ["type", "startDate", "premium", "hasClaims", "autoRenew", "policyholders", "property", "paymentMethod"],
+            saleRequired);
+        foreach (var name in new[] { "startDate", "premium", "hasClaims", "autoRenew" })
+        {
+            var type = sale.GetProperty("properties").GetProperty(name).GetProperty("type");
+            Assert.DoesNotContain("null", type.ValueKind == JsonValueKind.Array
+                ? type.EnumerateArray().Select(value => value.GetString()!)
+                : [type.GetString()!]);
+        }
+    }
+
+    [Fact]
     public async Task Automatic_validation_uses_the_shared_problem_contract()
     {
         var response = await _client.PostAsJsonAsync(

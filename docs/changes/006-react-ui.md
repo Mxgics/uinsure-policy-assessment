@@ -24,3 +24,7 @@ The first build exposed a Vite/Vitest config typing mismatch and Vitest discover
 - npm audit reported zero known vulnerabilities for the locked 153-package graph.
 
 Playwright uses deterministic intercepted API responses for browser presentation/interaction checks; real API/SQL contracts and lifecycle behaviour remain covered by the backend integration suite. This is not misrepresented as one full-stack browser test.
+
+## Later review qualification - 2026-09-27
+
+The original passing checks did not establish complete accessibility or failure recovery. Subsequent browser probes found focus could escape the open dialog, destructive-button text contrast was approximately 3.71:1, business-conflict detail was hidden, and a failed refresh after a successful mutation left misleading stale state. These findings remain open; see R5/R6/R7/R9 in the [review checkpoint](review-checkpoint-2026-09-27.md).

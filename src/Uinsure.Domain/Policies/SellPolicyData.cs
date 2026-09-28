@@ -15,6 +15,6 @@ public sealed record PolicyholderData(string FirstName, string LastName, DateOnl
 public sealed record PropertyData(
     string AddressLine1,
     string? AddressLine2,
-    string City,
-    string Postcode,
-    int Bedrooms);
+    string? AddressLine3,
+    string? City,
+    string Postcode);

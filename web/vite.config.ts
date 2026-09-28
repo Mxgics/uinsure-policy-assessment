@@ -7,7 +7,7 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     proxy: {
-      '/api': 'http://127.0.0.1:5080',
+      '/api': process.env.UINSURE_API_PROXY ?? 'http://127.0.0.1:5080',
     },
   },
   test: {

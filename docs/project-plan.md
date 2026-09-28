@@ -2,21 +2,26 @@
 
 ## Delivery principles
 
-Use small coherent stacked PRs, truthful evidence, and bottom-up review. The owner approved continuous implementation of PRs 2–7 on 2026-09-26; each PR targets its predecessor until that dependency merges. Meaningful business behaviour follows red/green/refactor; setup and documentation do not need artificial failing tests.
+Use small coherent commits, truthful evidence, and owner review. PRs #2–#7 were originally delivered as a stack and are now merged. Meaningful business behaviour follows red/green/refactor; setup and documentation do not need artificial failing tests.
 
 ## Pull request sequence
 
 | PR | Deliverable | Exit condition | Status |
 | --- | --- | --- | --- |
 | 1 | Brief, requirements, assumptions, architecture ADR, context/plan, agent/contribution/PR conventions | Public documentation PR is verified and ready for owner review; no implementation claims | Merged |
-| 2 | ASP.NET controllers/SQL/migrations, reproducible tests/CI, OpenAPI/errors, local tooling | Clean local foundation runs; real SQL migration/test path and CI are verified; Docker execution is evidenced | Ready for review; CI pending push |
-| 3 | Sell, policy retrieval, term retrieval | Validated domain/API/SQL behaviour and history for M1/M2 and related boundaries | Ready for review; local verification passed |
-| 4 | Cancellation quote/execution | Refund rules, claims/no-payment, atomicity, rollback and cancel races verified; assessment minimum complete | Ready for review; local verification passed |
-| 5 | Renewal | Window, successor/history, payments/cheque, and mixed lifecycle races verified | Ready for review; local verification passed |
-| 6 | React UI | Accessible responsive workflows and real browser journeys verified | Ready for review; local verification passed |
-| 7 | Final readiness | Clean-clone proof, complete requirement evidence, walkthrough, limits and public-source review | Ready for review; clean-clone verification passed |
+| 2 | ASP.NET controllers/SQL/migrations, reproducible tests/CI, OpenAPI/errors, local tooling | Clean local foundation runs; real SQL migration/test path and CI are verified; Docker execution is evidenced | Merged |
+| 3 | Sell, policy retrieval, term retrieval | Validated domain/API/SQL behaviour and history for M1/M2 and related boundaries | Merged |
+| 4 | Cancellation quote/execution | Refund rules, claims/no-payment, atomicity, rollback and cancel races verified; assessment minimum complete | Merged |
+| 5 | Renewal | Window, successor/history, payments/cheque, and mixed lifecycle races verified | Merged |
+| 6 | React UI | Accessible responsive workflows and real browser journeys verified | Merged |
+| 7 | Final readiness | Clean-clone proof, complete requirement evidence, walkthrough, limits and public-source review | Merged; historical checkpoint later qualified by review |
+| 8 | Review corrections and coherence | R1-R9, missing boundaries, property migration, UI recovery/accessibility, real browser/API/SQL proof and final coherence fixes | GitHub PR #9 open; final local gates passed, current-head CI and owner review pending |
 
-Review and merge bottom-up. After a base PR merges, retarget the next PR to `main`; never merge a dependent PR before its base.
+Review only GitHub PR #9 against `main`. After explicit merge authorization, verify the resulting `main` commit and CI before the owner submits the repository.
+
+## Review follow-up - 2026-09-27
+
+Nine review findings were open at `806ecab`. The owner approved one delivery-stage 8 correction plan, removing Bedrooms, retaining optional City, and including real browser-to-SQL tests. After PRs #2–#7 merged, PR #9 was repaired by merging `main` into its existing branch without rewriting history. The [stage 8 note](changes/008-review-fixes.md), [historical review](changes/review-checkpoint-2026-09-27.md), and [coherence findings](changes/009-coherence-review.md) separate earlier evidence from the final candidate.
 
 ## Planned structure
 

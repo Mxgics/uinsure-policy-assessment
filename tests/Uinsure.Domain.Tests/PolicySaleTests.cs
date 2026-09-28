@@ -89,6 +89,25 @@ public sealed class PolicySaleTests
         Assert.Throws<DomainValidationException>(() => Policy.Sell("POL-MONEY", data, Today, Now));
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void Undefined_enums_are_rejected_without_JSON(bool insuranceType)
+    {
+        var data = insuranceType ? ValidData() with { Type = (InsuranceType)99 }
+            : ValidData() with { PaymentMethod = (PaymentMethod)99 };
+        Assert.Throws<DomainValidationException>(() => Policy.Sell("POL-INVALID", data, Today, Now));
+    }
+
+    [Theory]
+    [InlineData("2027-01-01")]
+    [InlineData("9999-12-31")]
+    public void Future_and_overflowing_birth_dates_are_rejected(string date)
+    {
+        var data = ValidData(holderBirthDate: DateOnly.Parse(date));
+        Assert.Throws<DomainValidationException>(() => Policy.Sell("POL-DOB", data, Today, Now));
+    }
+
     private static SellPolicyData ValidData(
         DateOnly? startDate = null,
         DateOnly? holderBirthDate = null) => new(
@@ -98,6 +117,6 @@ public sealed class PolicySaleTests
         HasClaims: false,
         AutoRenew: true,
         [new PolicyholderData(" Zach ", " Johnson ", holderBirthDate ?? new DateOnly(1990, 1, 1))],
-        new PropertyData(" 1 Test Street ", null, " Manchester ", " m1 1aa ", 3),
+        new PropertyData(" 1 Test Street ", null, null, " Manchester ", " m1 1aa "),
         PaymentMethod.Card);
 }

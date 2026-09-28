@@ -2,9 +2,7 @@
 
 ## Current phase
 
-PR 7 is the final documentation-only readiness checkpoint on the complete PR 6 application. A fresh clone passed locked restores, formatting, Release build, all backend/frontend/browser tests, and repository privacy/link checks. Owner review and bottom-up merges remain.
-
-After PR 1 merged, the owner approved a stacked workflow: PRs 2–7 are implemented continuously as dependent branches and reviewed/merged bottom-up.
+PRs #1–#7 are merged. Delivery stage 8 remains [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) on `codex/pr8-review-fixes`. Its existing tip was backed up, current `origin/main` was merged without force-push, and the ancestry-conflict resolution was verified to reproduce the correction tip tree before coherence work. The [stage 8 note](changes/008-review-fixes.md) preserves its earlier clean-checkout evidence; the [coherence review](changes/009-coherence-review.md) records later fixes. Clean-checkout gates, rendered/keyboard review and the disposable demo passed on `2709595`, and all three CI jobs passed on `1f7615c`. The subsequent owner-requested error-handling refactor passed complete local gates (including 18 frontend tests); its exact-head CI result belongs in PR #9 before owner review.
 
 ## Observed environment
 
@@ -30,7 +28,8 @@ The repository contains only public project material and synthetic examples. Sup
 
 ## Known unresolved issues
 
-- GitHub CI evidence is pending the PR 2 push.
-- Lifecycle behaviour and the browser app remain pending later stacked PRs.
+- GitHub PR #9 requires current-head CI and owner review; do not merge without explicit instruction.
+- Bedrooms removal is intentionally data-losing for that column; the runbook documents backup and guarded rollback. City is optional and Address Line 3 is retained.
+- Historical PR 3 red/green chronology remains unavailable; it has not been invented.
 - A repository licence has not been selected.
-- PRs 2–6 reported successful applicable GitHub CI jobs when final readiness was prepared; PR 7's live CI result remains a review item.
+- PR #9 history still contains the original stacked commits, but its file comparison against `main` contains only stage 8 corrections and later coherence work.
