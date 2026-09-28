@@ -56,6 +56,32 @@ export function App() {
     }
   }
 
+  async function handleActionError(caught: unknown, mutation: false | 'sale' | 'lifecycle') {
+    if (caught instanceof ApiError && caught.status === 409 && policy) {
+      await refreshPolicy(policy.reference, errorText(caught))
+      return
+    }
+
+    const outcomeIsUncertain = !(caught instanceof ApiError) || caught.status >= 500
+    if (!outcomeIsUncertain) {
+      setError(errorText(caught))
+      return
+    }
+
+    switch (mutation) {
+      case 'sale':
+        setError('Policy creation may have succeeded, but no usable confirmation was received. Keep these details and do not resubmit: without a known reference, a second request could create a duplicate policy.')
+        return
+      case 'lifecycle':
+        setStale(true)
+        setQuotes({})
+        setError('The outcome is uncertain. Refresh policy before making further changes; do not repeat the request.')
+        return
+      default:
+        setError(errorText(caught))
+    }
+  }
+
   async function run(action: () => Promise<void>, mutation: false | 'sale' | 'lifecycle' = false, preserveNotice = false) {
     if (busyRef.current) return
     busyRef.current = true
@@ -65,17 +91,7 @@ export function App() {
     try {
       await action()
     } catch (caught) {
-      if (caught instanceof ApiError && caught.status === 409 && policy) {
-        await refreshPolicy(policy.reference, errorText(caught))
-      } else if (mutation === 'sale' && (!(caught instanceof ApiError) || caught.status >= 500)) {
-        setError('Policy creation may have succeeded, but no usable confirmation was received. Keep these details and do not resubmit: without a known reference, a second request could create a duplicate policy.')
-      } else if (mutation === 'lifecycle' && (!(caught instanceof ApiError) || caught.status >= 500)) {
-        setStale(true)
-        setQuotes({})
-        setError('The outcome is uncertain. Refresh policy before making further changes; do not repeat the request.')
-      } else {
-        setError(errorText(caught))
-      }
+      await handleActionError(caught, mutation)
     } finally {
       setBusy(false)
       busyRef.current = false

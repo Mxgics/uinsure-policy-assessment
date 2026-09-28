@@ -101,3 +101,9 @@ Earlier PR sections preserve their original observations. Current review and del
 - Executed the maintained gates in a separate local clone. Corrected comment formatting, a Required-validation camel-case key regression and a TypeScript partial-matcher compile error exposed by those gates; retained the failing regression rather than weakening its assertion.
 - Final local results on `2709595`: 38 domain, 72 API/SQL, 15 frontend, 10 mocked-browser and 8 full-stack tests passed. Exercised the disposable HTTP demo, reviewed rendered desktop/mobile output and keyboard focus, and verified cleanup.
 - Recorded migration/scan scope and remaining limits in the test plan. Current-head CI and owner review remain separate; no merge or recruiter message is authorized.
+
+### Error-handling readability follow-up — 2026-09-28
+
+- Owner requested simpler branching. Refactored backend exception mapping to a pattern switch/shared response write and extracted frontend recovery into a helper with conflict-first guards and an operation switch. Preserved messages, response contracts, recovery precedence and finally cleanup.
+- Added HTTP 500 characterization for sale/renewal/cancellation and verified it passed before production changes. This is refactoring under passing tests, not a fabricated red/green cycle.
+- Executed final local gates: 38 domain, 72 API/SQL, 18 frontend, 10 mocked-browser and 8 real full-stack tests passed; Release build had zero warnings/errors. Current-head CI and owner review remain separate gates.

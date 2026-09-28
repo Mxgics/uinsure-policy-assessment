@@ -12,38 +12,35 @@ internal sealed class ApiExceptionHandler(IProblemDetailsService problemDetailsS
         Exception exception,
         CancellationToken cancellationToken)
     {
-        if (exception is DomainConflictException conflict)
+        ProblemDetails problem;
+        string code;
+        switch (exception)
         {
-            httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
-            var conflictProblem = new ProblemDetails
-            {
-                Status = StatusCodes.Status409Conflict,
-                Title = "The requested change conflicts with current policy state.",
-                Detail = conflict.Message,
-                Type = "https://httpstatuses.com/409"
-            };
-            ApiProblemDetailsDefaults.AddExtensions(conflictProblem, httpContext, "policy_conflict");
-            return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
-            {
-                HttpContext = httpContext,
-                ProblemDetails = conflictProblem,
-                Exception = exception
-            });
+            case DomainConflictException conflict:
+                problem = new ProblemDetails
+                {
+                    Status = StatusCodes.Status409Conflict,
+                    Title = "The requested change conflicts with current policy state.",
+                    Detail = conflict.Message,
+                    Type = "https://httpstatuses.com/409"
+                };
+                code = "policy_conflict";
+                break;
+            case DomainValidationException validation:
+                problem = new HttpValidationProblemDetails(validation.Errors)
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "One or more validation errors occurred.",
+                    Type = "https://httpstatuses.com/400"
+                };
+                code = "validation_error";
+                break;
+            default:
+                return false;
         }
 
-        if (exception is not DomainValidationException validation)
-        {
-            return false;
-        }
-
-        httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
-        var problem = new HttpValidationProblemDetails(validation.Errors)
-        {
-            Status = StatusCodes.Status400BadRequest,
-            Title = "One or more validation errors occurred.",
-            Type = "https://httpstatuses.com/400"
-        };
-        ApiProblemDetailsDefaults.AddExtensions(problem, httpContext, "validation_error");
+        httpContext.Response.StatusCode = problem.Status.Value;
+        ApiProblemDetailsDefaults.AddExtensions(problem, httpContext, code);
 
         return await problemDetailsService.TryWriteAsync(new ProblemDetailsContext
         {

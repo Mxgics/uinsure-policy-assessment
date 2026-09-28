@@ -26,3 +26,9 @@ The former PR #9 tip `5b3c79f` is preserved as local branch `backup/pr9-before-m
 ## Final gate follow-up — 2026-09-28
 
 Clean-checkout verification caught a comment-formatting failure, a required-field error-key regression and a TypeScript test-matcher compile error. Commits `e877c0e` and `2709595` correct these without changing the agreed business rules. The existing missing-boolean test supplies the observed red case; the JSON validation metadata provider restores camel-case keys while Required annotations preserve the schema. Complete backend, frontend, mocked and real-browser gates then passed. The test plan records exact counts, rendered/keyboard checks, disposable HTTP demo, migration evidence and scan limits. Current-head CI and owner review remain separate gates.
+
+## Error-handling readability follow-up — 2026-09-28
+
+At owner request, replaced exception-type branching with a pattern-matching switch and one shared Problem Details write path. Unknown exceptions still return false to the existing fallback. In the frontend, `run` now delegates to `handleActionError`: conflict recovery remains first, uncertainty is calculated once, and a switch separates sale/lifecycle recovery. Database exception filters and domain guards remain unchanged; there are no API, schema, message or business-rule changes.
+
+Added passing characterization cases for HTTP 500 on sale, renewal and cancellation before refactoring. They verify draft retention, busy-state release, cleared quotes, blocked lifecycle actions, GET-only recovery and no automatic POST retry. This is a behaviour-preserving refactor, not a new red/green business feature. All maintained local gates passed afterward; current-head CI is verified in PR #9 after push.

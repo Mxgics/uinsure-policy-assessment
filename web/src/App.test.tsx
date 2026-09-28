@@ -50,6 +50,7 @@ describe('policy desk', () => {
   it.each([
     ['a network failure', () => Promise.reject(new TypeError('Network failure'))],
     ['an unusable success response', () => Promise.resolve(new Response('{}', { status: 201 }))],
+    ['an HTTP 500 response', () => Promise.resolve(new Response('{}', { status: 500 }))],
   ])('treats sale %s as uncertain without inviting a duplicate', async (_description, response) => {
     const fetchMock = vi.fn().mockImplementation(response)
     vi.stubGlobal('fetch', fetchMock)
@@ -64,6 +65,38 @@ describe('policy desk', () => {
     expect(alert).not.toHaveTextContent('try again')
     expect(screen.getByLabelText('First name')).toHaveValue('Ada')
     expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('button', { name: 'Create policy' })).toBeEnabled()
+  })
+
+  it.each(['renewal', 'cancellation'])('requires GET recovery after %s returns HTTP 500', async operation => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify(policy)))
+      .mockResolvedValueOnce(new Response(JSON.stringify(quote)))
+      .mockResolvedValueOnce(new Response('{}', { status: 500 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(policy)))
+    vi.stubGlobal('fetch', fetchMock)
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('Policy reference'), { target: { value: policy.reference } })
+    fireEvent.submit(screen.getByLabelText('Policy reference').closest('form')!)
+    await screen.findByRole('heading', { name: policy.reference })
+    fireEvent.submit(screen.getByRole('heading', { name: 'Cancellation estimate' }).closest('form')!)
+    await screen.findByText(`Calculated for ${quote.date}`)
+
+    if (operation === 'renewal') fireEvent.click(screen.getByRole('button', { name: 'Renew term' }))
+    else {
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel policy term' }))
+      fireEvent.click(screen.getByRole('button', { name: 'Confirm cancellation' }))
+    }
+
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('outcome is uncertain'))
+    expect(screen.queryByText(`Calculated for ${quote.date}`)).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Renew term' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Cancel policy term' })).toBeDisabled()
+    expect(fetchMock).toHaveBeenCalledTimes(3)
+    fireEvent.click(screen.getByRole('button', { name: 'Refresh policy' }))
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Renew term' })).toBeEnabled())
+    expect(fetchMock.mock.calls.filter(call => call[1]?.method === 'POST')).toHaveLength(1)
+    expect(fetchMock).toHaveBeenCalledTimes(4)
   })
 
   it('renders retrieved history and refreshes after a conflict', async () => {

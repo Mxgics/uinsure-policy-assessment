@@ -146,3 +146,16 @@ A separate local clone of `27095955ee04dc1681fd04742ee79d4f68c6b284` passed:
 The first clean gate stopped at formatting for the newly inserted expression-body comments; moving them above the methods fixed it (`e877c0e`). The next backend run passed 38 domain and 71 integration tests but failed the existing missing-boolean field-key regression: new Required annotations used CLR property names. The smallest correction registers the framework JSON validation metadata provider, preserving the existing camel-case error contract and required OpenAPI metadata. The frontend production build also exposed an overly strict generic type on a partial error matcher; removing that generic retained the assertions and fixed compilation. Both corrections are in `2709595`; complete gates above passed afterward. These are observed failures, not retroactively invented test-first steps. No further refactor was needed.
 
 The field-name correction follows the official [JSON validation metadata provider](https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.modelbinding.metadata.systemtextjsonvalidationmetadataprovider?view=aspnetcore-10.0). CI for the final documentation head is checked separately after normal push. Owner review, authorized merge and final-main verification remain outstanding.
+
+## Error-handling refactor verification — 2026-09-28
+
+The owner requested a focused readability follow-up to `1f7615c`. Before production edits, the existing API/SQL suite passed 72/72 and frontend tests passed 15/15. Added three HTTP 500 characterization cases (sale, renewal, cancellation); the unchanged implementation passed all 18 frontend tests. No failing business behaviour or artificial red cycle is claimed.
+
+After refactoring the backend exception switch/shared writer and frontend named recovery helper:
+
+- `pwsh -File scripts/Test-Local.ps1` passed locked restores, formatting, Release build (zero warnings/errors), **38 domain and 72 real API/SQL tests**, zero skips. Existing validation/conflict/unknown-exception contracts remained green.
+- `npm run build`, `npm test`, and `npm run test:e2e` passed: **18 frontend tests and 10 mocked desktop/mobile browser checks**.
+- `pwsh -File scripts/Test-FullStack.ps1` passed **8 real browser/API/SQL journeys**, fresh SQL assertions and owned-process/container cleanup.
+- `git diff --check` passed. These runs used the working checkout; the earlier separate clean-checkout/manual demo evidence remains its dated checkpoint. No rendered styles or migrations changed in this follow-up.
+
+The new final head supersedes the previous review candidate. All three CI jobs must pass on that exact pushed head; the result is recorded in the live PR description. Owner review, explicit merge authorization and final-main verification remain outstanding.
