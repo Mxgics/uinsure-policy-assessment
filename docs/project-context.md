@@ -2,7 +2,7 @@
 
 ## Current phase
 
-PRs #1–#7 are merged. Delivery stage 8 remains [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) on `codex/pr8-review-fixes`. Its existing tip was backed up, current `origin/main` was merged without force-push, and the ancestry-conflict resolution was verified to reproduce the correction tip tree before coherence work. The [stage 8 note](changes/008-review-fixes.md) preserves its earlier clean-checkout evidence; the [coherence review](changes/009-coherence-review.md) records later fixes. Clean-checkout gates, rendered/keyboard review and the disposable demo passed on `2709595`, and all three CI jobs passed on `1f7615c`. The subsequent owner-requested error-handling refactor passed complete local gates (including 18 frontend tests); its exact-head CI result belongs in PR #9 before owner review.
+PRs #1–#7 and delivery-stage 8 [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) are merged into `main` at `8c845fa`. Delivery stage 9 is published as [PR #10](https://github.com/Mxgics/uinsure-policy-assessment/pull/10) from `codex/demo-usability` and locally verified: opt-in stable synthetic scenarios, one-to-three-holder UI support, matching age/payment constraints and clearer lifecycle availability. The owner confirmed manual testing complete on 28 September 2026. The final submission review aligns documentation and makes mocked UI tests independent of the wall clock. Executed evidence belongs in the [test plan](test-plan.md); final PR review remains the gate before an explicitly authorized merge.
 
 ## Observed environment
 
@@ -28,8 +28,7 @@ The repository contains only public project material and synthetic examples. Sup
 
 ## Known unresolved issues
 
-- GitHub PR #9 requires current-head CI and owner review; do not merge without explicit instruction.
+- Delivery stage 9 has recorded local gates and owner-confirmed manual testing; publication CI and final PR review are tracked separately. Do not merge without explicit instruction.
 - Bedrooms removal is intentionally data-losing for that column; the runbook documents backup and guarded rollback. City is optional and Address Line 3 is retained.
 - Historical PR 3 red/green chronology remains unavailable; it has not been invented.
 - A repository licence has not been selected.
-- PR #9 history still contains the original stacked commits, but its file comparison against `main` contains only stage 8 corrections and later coherence work.

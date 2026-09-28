@@ -1,5 +1,20 @@
 # Test plan and evidence
 
+## Current candidate summary
+
+Candidate: delivery stage 9 on `codex/demo-usability`, based on merged `main` at `8c845fa`. The owner confirmed manual testing complete and satisfactory on **28 September 2026**. This is an owner-reported result; no per-case manual log or new screenshots are inferred.
+
+| Layer | Latest recorded result | Evidence boundary |
+| --- | --- | --- |
+| Backend | 40 domain and 75 real SQL integration tests; locked restore, formatting and Release build passed | Stage 9 local execution below; not rerun during the documentation pass |
+| Frontend | Production build and 23 component/API-boundary tests passed | Rerun during final submission preparation after fixing the mocked test clock |
+| Browser contracts | 12 desktop/mobile Chromium tests passed | Intercepted API responses; fixed historical clock |
+| Full stack | 8 real browser/API/SQL journeys passed | Stage 9 local execution below; retains real UTC today |
+| Owner manual testing | Complete and satisfactory | Owner confirmation, separate from automated results and final PR approval |
+| Publication | Exact-head backend, frontend and fullstack CI tracked in [PR #10](https://github.com/Mxgics/uinsure-policy-assessment/pull/10) | Merge and final-main verification require separate authorization |
+
+The dated entries below are historical execution records. Statements that checks were pending describe that checkpoint, not necessarily the current candidate. No current-candidate clean-clone execution is claimed from an earlier clone.
+
 ## PR 2 evidence — 2026-09-26
 
 - Release solution build: succeeded with zero warnings/errors.
@@ -159,3 +174,32 @@ After refactoring the backend exception switch/shared writer and frontend named 
 - `git diff --check` passed. These runs used the working checkout; the earlier separate clean-checkout/manual demo evidence remains its dated checkpoint. No rendered styles or migrations changed in this follow-up.
 
 The new final head supersedes the previous review candidate. All three CI jobs must pass on that exact pushed head; the result is recorded in the live PR description. Owner review, explicit merge authorization and final-main verification remain outstanding.
+
+## Delivery stage 9 demo-usability evidence — 2026-09-28
+
+The new automatic-renewal/Cheque domain regression first failed because no exception was thrown. Adding the cross-field domain guard made that focused test pass; its API/SQL regression then returned HTTP 400 with `paymentMethod` detail and proved the policy count was unchanged.
+
+The first complete backend gate found two older Cheque fixtures still set `autoRenew=true`: 40 domain tests passed and 72/74 API tests passed. The fixtures were corrected to manual renewal without weakening their Cheque round-trip/refund assertions. A failed-seed interceptor case was then added to prove transaction rollback retains the original six demo policies. The final rerun of `pwsh -File scripts/Test-Local.ps1` passed locked restores, format verification, a Release build with zero warnings/errors, **40 domain tests and 75 real SQL integration tests**, zero skips.
+
+The SQL seeder regression uses six exact stable references. It seeds, renews and cancels through the real API, reseeds, verifies one pristine term per scenario, holder/payment/claims variants, and preservation of a non-demo policy. An initial direct-aggregate mutation in the test encountered an EF concurrency exception outside the production orchestration path; changing the test to exercise the real API corrected the test design rather than hiding a product failure.
+
+Frontend evidence:
+
+- `npm run build` passed the TypeScript and Vite production build.
+- `npm test -- --reporter=dot` passed **23 component/API-boundary tests**, including three-holder payload/history, dynamic age limits, automatic/manual payment behaviour, stable scenario loading and lifecycle-action availability.
+- `npm run test:e2e` passed **12 desktop/mobile Chromium checks**, including keyboard expansion/collapse of prepared scenarios, three-holder sale, long references, cancellation modal focus/contrast and renewal history.
+- `pwsh -File scripts/Test-FullStack.ps1` passed **eight real browser/API/SQL journeys** and fresh-context financial/history assertions; owned processes and disposable SQL were cleaned up.
+- Inspected final desktop/mobile sale and full-stack captures. The prepared-scenario disclosure, holder cards, renewal facts and actions were readable with no observed clipping or horizontal overflow. This remains scoped Chromium evidence rather than comprehensive accessibility certification.
+
+No migration, response-schema change, scheduled renewal, production seed endpoint or configurable API clock was introduced. Final diff/link/privacy checks, publication CI, owner review and merge remain separate gates.
+
+## Final submission audit — 2026-09-28
+
+- Reviewed the complete stage 9 candidate diff, domain lifecycle rules, controller/request/service boundaries, SQL mappings and seeder, frontend recovery and availability logic, local scripts and CI workflow. No application behaviour or API contract was changed during this submission pass.
+- Corrected the README startup sequence, stale contribution/status wording, broken change-index table, and manual-plan claims about client-supplied references, leap birthdays, field-error association and uncertain-sale recovery. The current README explicitly identifies the candidate branch while its PR is unmerged.
+- Reproduced the mocked-fixture expiry at a diagnostic date of 1 January 2027: **7 failed / 16 passed** component/API-boundary tests. Fixed only the test clock (Date in Vitest, browser time before Playwright navigation) to 28 September 2026. `npm run build`, `npm test -- --reporter=dot` (**23 passed**) and `npm run test:e2e` (**12 passed**) then completed successfully. The initial restricted-process attempt stopped at Vite `spawn EPERM`; it supplied no behavioural evidence. Host execution produced the recorded failure and passing rerun.
+- Audited **150 candidate files**, including all four previously untracked delivery files, **31 Markdown files**, **75 local file/fragment links** and **4 heading anchors**. All targets resolved after correction. No forbidden generated/private file types or matches for the selected private-path, token, embedded-password and private-contact patterns were found. This is a targeted scan, not an exhaustive secret audit; external documentation URLs were not comprehensively checked.
+- `git diff --check` passed. Compared quick-start commands and pinned prerequisites with the maintained scripts, package commands and CI. Live GitHub metadata confirmed public visibility, default branch `main` and no existing open PR; the remote main tip matched `8c845fa`.
+- The owner confirmed manual testing complete and satisfactory. That confirmation is distinct from a per-case execution log. Backend/full-stack local evidence above was retained without claiming a rerun during this documentation and test-harness pass. Final publication CI is verified against the exact PR head and recorded in its description; merging and final-main verification remain separate gates.
+
+Publication: committed the reviewed candidate as `d3b20ae`, pushed `codex/demo-usability`, and opened [PR #10](https://github.com/Mxgics/uinsure-policy-assessment/pull/10) against `main`. A documentation-only follow-up links the published PR and records its first commit; final CI is checked on that follow-up head. The candidate contains 32 changed files, including all four previously untracked delivery files. No merge was performed.

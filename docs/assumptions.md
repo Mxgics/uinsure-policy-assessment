@@ -27,7 +27,7 @@ The owner approved delivery stage 8 (GitHub PR #9) to add Address Line 3, retain
 - A policy has a stable generated reference and one or more immutable historical term snapshots.
 - Claims are term-local. Renewal retains the earlier term’s claim history and resets the new term to no claims. This does not model a real underwriting decision.
 - Temporal state (`Scheduled`, `Current`, `Expired`, `Cancelled`) is derived; cancellation wins. Payment state (`Recorded`, `NotRecorded`) is separate and does not claim settlement or cover validity.
-- Card, Direct Debit, and cheque are accepted on initial sale. The cheque restriction applies only to automatic renewal.
+- Card and Direct Debit are accepted for either renewal mode on initial sale. Cheque is accepted only when auto-renew is false, preventing a policy from carrying an automatic preference that cannot produce a valid renewal payment.
 - An unpaid renewal term is permitted when auto-renew is false. It can later be cancelled for zero refund and renewed if otherwise eligible.
 
 ## Cancellation
@@ -42,6 +42,7 @@ The owner approved delivery stage 8 (GitHub PR #9) to add Address Line 3, retain
 
 - Renewal creates a successor on the day after the prior inclusive end, copies snapshots/premium/auto-renew, and resets claims. Repricing and preference changes are out of scope.
 - Auto-renew requires Card or Direct Debit and atomically records payment. Manual renewal requires no payment method and creates no payment.
+- Renewal remains an explicit user action in this assessment. Auto-renew controls payment behaviour and presentation; it does not imply a background scheduler.
 - A term that has ever had a successor cannot be renewed again, even if that successor was cancelled.
 - Every lifecycle mutation updates the parent policy revision and SQL `rowversion` so competing child inserts share a concurrency boundary. Expected races/known unique conflicts return 409; unrelated SQL failures do not.
 - Sale has no request-idempotency key. A retry after a lost response can create another valid policy; clients must not automatically retry mutations.
@@ -49,4 +50,5 @@ The owner approved delivery stage 8 (GitHub PR #9) to add Address Line 3, retain
 ## Operational boundary
 
 - Local development and integration tests target SQL Server 2022 Developer in a pinned Linux x64 container. Docker engine, adequate memory, and licence acceptance are prerequisites; failure is explicit and never triggers a database substitution.
+- Demo seeding is opt-in via `Start-Local.ps1 -SeedDemo`. It transactionally replaces only six stable synthetic references; ordinary startup preserves history.
 - Local services bind to loopback and use synthetic data. No authentication, CORS exposure, cloud deployment, or production suitability is implied.

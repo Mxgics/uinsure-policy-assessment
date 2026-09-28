@@ -98,6 +98,10 @@ public sealed class Policy
         var errors = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
         if (!Enum.IsDefined(data.Type)) errors["type"] = ["Unsupported insurance type."];
         if (!Enum.IsDefined(data.PaymentMethod)) errors["paymentMethod"] = ["Unsupported payment method."];
+        if (data.AutoRenew && data.PaymentMethod == PaymentMethod.Cheque)
+        {
+            errors["paymentMethod"] = ["Automatic renewal requires Card or DirectDebit."];
+        }
         var latestStart = today.AddDays(60);
         if (data.StartDate < today || data.StartDate > latestStart)
         {

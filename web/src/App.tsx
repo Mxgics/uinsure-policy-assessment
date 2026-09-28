@@ -4,6 +4,58 @@ import type { CancellationResult, PaymentMethod, Policy, PolicyTerm, SellPolicyI
 
 const today = new Date().toISOString().slice(0, 10)
 
+const demoPolicies = [
+  { reference: 'POL-DEMO-AUTO-HH', title: 'Automatic · Household', detail: 'Card · renewal eligible' },
+  { reference: 'POL-DEMO-AUTO-BTL', title: 'Automatic · Buy to Let', detail: 'Direct Debit · three holders' },
+  { reference: 'POL-DEMO-MANUAL-HH', title: 'Manual · Household', detail: 'Cheque · unpaid renewal' },
+  { reference: 'POL-DEMO-MANUAL-BTL', title: 'Manual · Buy to Let', detail: 'Card · unpaid renewal' },
+  { reference: 'POL-DEMO-CANCEL-REFUND', title: 'Cancellation · refund', detail: 'Day 15 pro-rata example' },
+  { reference: 'POL-DEMO-CANCEL-CLAIMS', title: 'Cancellation · claims', detail: 'Zero-refund example' },
+] as const
+
+function shiftDate(value: string, days: number) {
+  const date = new Date(`${value}T00:00:00Z`)
+  date.setUTCDate(date.getUTCDate() + days)
+  return date.toISOString().slice(0, 10)
+}
+
+function latestEligibleBirthDate(startDate: string) {
+  const [year, month, day] = startDate.split('-').map(Number)
+  const birthYear = year - 16
+  const isLeap = (value: number) => value % 4 === 0 && (value % 100 !== 0 || value % 400 === 0)
+  const latestDay = month === 2 && day === 28 && !isLeap(year) && isLeap(birthYear) ? 29 : day
+  return `${birthYear.toString().padStart(4, '0')}-${month.toString().padStart(2, '0')}-${latestDay.toString().padStart(2, '0')}`
+}
+
+function lifecycleAvailability(term: PolicyTerm, terms: PolicyTerm[]) {
+  const successors = terms.filter(item => item.predecessorTermId === term.id)
+  const renewalStart = shiftDate(term.endDate, -30)
+  const renewalReason = successors.length > 0
+    ? 'A successor term already exists.'
+    : term.cancellation
+      ? 'Cancelled terms cannot be renewed.'
+      : today < renewalStart
+        ? `Renewal opens ${renewalStart}.`
+        : today > term.endDate
+          ? `Renewal closed ${term.endDate}.`
+          : `Eligible now through ${term.endDate}.`
+  const activeSuccessor = successors.some(item => item.cancellation === null)
+  const cancellationReason = term.cancellation
+    ? 'This term is already cancelled.'
+    : activeSuccessor
+      ? 'A term with an active successor cannot be cancelled.'
+      : today > term.endDate
+        ? 'Expired terms cannot be cancelled.'
+        : 'Eligible to quote and cancel.'
+  return {
+    canRenew: successors.length === 0 && !term.cancellation && today >= renewalStart && today <= term.endDate,
+    canCancel: !term.cancellation && !activeSuccessor && today <= term.endDate,
+    renewalStart,
+    renewalReason,
+    cancellationReason,
+  }
+}
+
 function formatMoney(value: number) {
   return new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(value)
 }
@@ -98,10 +150,9 @@ export function App() {
     }
   }
 
-  async function findPolicy(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
+  async function loadPolicy(policyReference: string) {
     await run(async () => {
-      const found = await policyApi.get(reference)
+      const found = await policyApi.get(policyReference)
       setPolicy(found)
       setReference(found.reference)
       setQuotes({})
@@ -110,20 +161,26 @@ export function App() {
     })
   }
 
+  async function findPolicy(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    await loadPolicy(reference)
+  }
+
   async function sellPolicy(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const form = new FormData(event.currentTarget)
+    const holderCount = Number(form.get('policyholderCount'))
     const input: SellPolicyInput = {
       type: form.get('type') as Policy['type'],
       startDate: String(form.get('startDate')),
       premium: Number(form.get('premium')),
       hasClaims: form.get('hasClaims') === 'on',
-      autoRenew: form.get('autoRenew') === 'on',
-      policyholders: [{
-        firstName: String(form.get('firstName')),
-        lastName: String(form.get('lastName')),
-        dateOfBirth: String(form.get('dateOfBirth')),
-      }],
+      autoRenew: form.get('renewalMode') === 'automatic',
+      policyholders: Array.from({ length: holderCount }, (_, index) => ({
+        firstName: String(form.get(`firstName-${index}`)),
+        lastName: String(form.get(`lastName-${index}`)),
+        dateOfBirth: String(form.get(`dateOfBirth-${index}`)),
+      })),
       property: {
         addressLine1: String(form.get('addressLine1')),
         addressLine2: String(form.get('addressLine2')).trim() || null,
@@ -214,6 +271,29 @@ export function App() {
           </form>
         </section>
 
+        <details className="demo-panel">
+          <summary>
+            <span><span className="section-kicker">Seeded scenarios</span><strong>Try a prepared policy</strong></span>
+            <span>6 scenarios</span>
+          </summary>
+          <p>Start locally with <code>Start-Local.ps1 -SeedDemo</code>, then load any scenario.</p>
+          <div className="demo-grid">
+            {demoPolicies.map(item => (
+              <button key={item.reference} type="button" className="demo-policy" disabled={busy}
+                onClick={event => {
+                  const disclosure = event.currentTarget.closest('details')
+                  if (disclosure) disclosure.open = false
+                  setReference(item.reference)
+                  void loadPolicy(item.reference)
+                }}>
+                <strong>{item.title}</strong>
+                <span>{item.detail}</span>
+                <small>{item.reference}</small>
+              </button>
+            ))}
+          </div>
+        </details>
+
         <div className="status-stack" aria-live="polite" aria-atomic="true">
           {error && <div className="alert alert--error" role="alert">{error}</div>}
           {notice && <div className="alert alert--success">{notice}</div>}
@@ -230,7 +310,9 @@ export function App() {
               <button disabled={busy} className="button--quiet" onClick={() => { setPolicy(null); setQuotes({}); setNotice(''); setError(''); setStale(false) }}>Sell another policy</button>
             </div>
             <ol className="timeline" aria-label="Policy term history">
-              {sortedTerms.map((term, index) => (
+              {sortedTerms.map((term, index) => {
+                const availability = lifecycleAvailability(term, sortedTerms)
+                return (
                 <li key={term.id} className="term-card">
                   <div className="term-card__header">
                     <div>
@@ -241,10 +323,21 @@ export function App() {
                   </div>
                   <dl className="facts">
                     <div><dt>Premium</dt><dd>{formatMoney(term.premium)}</dd></div>
-                    <div><dt>Payment</dt><dd>{term.paymentState}</dd></div>
+                    <div><dt>Payment</dt><dd>{term.paymentState}{term.payment ? ` · ${term.payment.method === 'DirectDebit' ? 'Direct Debit' : term.payment.method}` : ''}</dd></div>
                     <div><dt>Claims</dt><dd>{term.hasClaims ? 'Recorded' : 'None'}</dd></div>
+                    <div><dt>Renewal mode</dt><dd><span className={`renewal-mode renewal-mode--${term.autoRenew ? 'automatic' : 'manual'}`}>{term.autoRenew ? 'Automatic' : 'Manual'}</span></dd></div>
                     <div><dt>Property</dt><dd>{[term.property.addressLine1, term.property.addressLine2, term.property.addressLine3, term.property.city, term.property.postcode].filter(Boolean).join(', ')}</dd></div>
                   </dl>
+                  <div className="holder-summary">
+                    <h4>Policy holders ({term.policyholders.length})</h4>
+                    <ul>
+                      {term.policyholders.map((holder, holderIndex) => (
+                        <li key={`${holder.firstName}-${holder.lastName}-${holderIndex}`}>
+                          <strong>{holder.firstName} {holder.lastName}</strong><span>Born {holder.dateOfBirth}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                   {term.cancellation && (
                     <div className="history-note">Cancelled {term.cancellation.date}; refund {formatMoney(term.cancellation.refundAmount)} ({term.cancellation.reason}).</div>
                   )}
@@ -253,18 +346,20 @@ export function App() {
                       <form onSubmit={event => quote(term, event)}>
                         <h4>Cancellation estimate</h4>
                         <p>Hypothetical only. Confirmation always recalculates for today.</p>
+                        <p className="availability">{availability.cancellationReason}</p>
                         <label htmlFor={`quote-${term.id}`}>Quote date</label>
                         <input id={`quote-${term.id}`} name="quoteDate" type="date" defaultValue={today} required />
-                        <button className="button--secondary" disabled={busy || stale}>Get quote</button>
+                        <button className="button--secondary" disabled={busy || stale || !availability.canCancel}>Get quote</button>
                         {quotes[term.id] && <Quote result={quotes[term.id]} />}
-                        <button type="button" className="button--danger" disabled={busy || stale} onClick={event => {
+                        <button type="button" className="button--danger" onClick={event => {
                           cancelTriggerRef.current = event.currentTarget
                           setConfirmTerm(term)
-                        }}>Cancel policy term</button>
+                        }} disabled={busy || stale || !availability.canCancel}>Cancel policy term</button>
                       </form>
                       <form onSubmit={event => renew(term, event)}>
-                        <h4>Renew this term</h4>
-                        <p>Available only during the final 31 calendar dates.</p>
+                        <h4>{term.autoRenew ? 'Automatic renewal' : 'Manual renewal'}</h4>
+                        <p>Window: {availability.renewalStart} through {term.endDate}.</p>
+                        <p className="availability">{availability.renewalReason}</p>
                         {term.autoRenew ? (
                           <>
                             <label htmlFor={`renew-${term.id}`}>Payment method</label>
@@ -273,13 +368,14 @@ export function App() {
                               <option value="DirectDebit">Direct debit</option>
                             </select>
                           </>
-                        ) : <input type="hidden" name="renewalPayment" value="" />}
-                        <button disabled={busy || stale}>Renew term</button>
+                        ) : <><input type="hidden" name="renewalPayment" value="" /><p>No payment will be recorded for the successor term.</p></>}
+                        <button disabled={busy || stale || !availability.canRenew}>{term.autoRenew ? 'Record automatic renewal' : 'Create unpaid renewal'}</button>
                       </form>
                     </div>
                   )}
                 </li>
-              ))}
+                )
+              })}
             </ol>
           </section>
         )}
@@ -319,29 +415,68 @@ function Quote({ result }: { result: CancellationResult }) {
 }
 
 function SellForm({ onSubmit, busy }: { onSubmit: (event: FormEvent<HTMLFormElement>) => void; busy: boolean }) {
+  const [holderIds, setHolderIds] = useState([0])
+  const [nextHolderId, setNextHolderId] = useState(1)
+  const [startDate, setStartDate] = useState(today)
+  const [renewalMode, setRenewalMode] = useState<'automatic' | 'manual'>('automatic')
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Card')
+  const latestBirthDate = latestEligibleBirthDate(startDate)
+
+  function addHolder() {
+    if (holderIds.length >= 3) return
+    setHolderIds(current => [...current, nextHolderId])
+    setNextHolderId(current => current + 1)
+  }
+
+  function removeHolder(id: number) {
+    if (holderIds.length <= 1) return
+    setHolderIds(current => current.filter(holderId => holderId !== id))
+  }
+
+  function selectRenewalMode(mode: 'automatic' | 'manual') {
+    setRenewalMode(mode)
+    if (mode === 'automatic' && paymentMethod === 'Cheque') setPaymentMethod('Card')
+  }
+
   return (
     <section className="sell-panel" aria-labelledby="sell-heading">
       <div className="sell-intro">
         <p className="section-kicker">New policy</p>
         <h2 id="sell-heading">Create a policy</h2>
-        <p>This focused demo captures one policyholder. The API supports up to three.</p>
+        <p>Create a policy with one to three holders, then retrieve it to review the complete lifecycle history.</p>
       </div>
       <form className="sell-form" onSubmit={onSubmit}>
+        <input type="hidden" name="policyholderCount" value={holderIds.length} />
         <fieldset>
           <legend>Cover</legend>
           <label>Policy type<select name="type" defaultValue="Household"><option value="Household">Household</option><option value="BuyToLet">Buy to Let</option></select></label>
-          <label>Start date<input name="startDate" type="date" defaultValue={today} required /></label>
+          <label>Start date<input name="startDate" type="date" value={startDate} min={today} max={shiftDate(today, 60)} onChange={event => setStartDate(event.target.value)} required /></label>
           <label>Annual premium (£)<input name="premium" type="number" min="0.01" max="90071992547409.90" step="0.01" defaultValue="365.00" required /></label>
-          <label>Payment method<select name="paymentMethod" defaultValue="Card"><option>Card</option><option value="DirectDebit">Direct debit</option><option>Cheque</option></select></label>
+          <label>Payment method<select name="paymentMethod" value={paymentMethod} onChange={event => setPaymentMethod(event.target.value as PaymentMethod)}><option>Card</option><option value="DirectDebit">Direct debit</option><option disabled={renewalMode === 'automatic'}>Cheque</option></select></label>
           <label className="check"><input name="hasClaims" type="checkbox" /> This term has claims</label>
-          <label className="check"><input name="autoRenew" type="checkbox" defaultChecked /> Auto-renew</label>
+          <fieldset className="renewal-choice">
+            <legend>Renewal mode</legend>
+            <label className="check"><input name="renewalMode" type="radio" value="automatic" checked={renewalMode === 'automatic'} onChange={() => selectRenewalMode('automatic')} /> Automatic</label>
+            <label className="check"><input name="renewalMode" type="radio" value="manual" checked={renewalMode === 'manual'} onChange={() => selectRenewalMode('manual')} /> Manual</label>
+            <small>{renewalMode === 'automatic'
+              ? 'An explicit renewal records a Card or Direct Debit payment. Cheque is unavailable.'
+              : 'An explicit renewal creates an unpaid successor. Cheque is allowed for this initial payment.'}</small>
+          </fieldset>
         </fieldset>
-        <fieldset>
-          <legend>Policyholder</legend>
-          <label>First name<input name="firstName" maxLength={100} autoComplete="given-name" required /></label>
-          <label>Last name<input name="lastName" maxLength={100} autoComplete="family-name" required /></label>
-          <label>Date of birth<input name="dateOfBirth" type="date" required /></label>
-        </fieldset>
+        {holderIds.map((holderId, index) => (
+          <fieldset key={holderId} className="policyholder-fieldset">
+            <legend>Policy holder {index + 1}</legend>
+            <label>First name<input name={`firstName-${index}`} maxLength={100} autoComplete="given-name" required /></label>
+            <label>Last name<input name={`lastName-${index}`} maxLength={100} autoComplete="family-name" required /></label>
+            <label>Date of birth<input name={`dateOfBirth-${index}`} type="date" max={latestBirthDate} aria-describedby={`dob-help-${holderId}`} required /></label>
+            <small id={`dob-help-${holderId}`}>Must be at least 16 on {startDate}.</small>
+            {holderIds.length > 1 && <button type="button" className="button--quiet" onClick={() => removeHolder(holderId)}>Remove policy holder {index + 1}</button>}
+          </fieldset>
+        ))}
+        <div className="policyholder-actions">
+          <button type="button" className="button--secondary" disabled={holderIds.length >= 3} onClick={addHolder}>Add another policy holder</button>
+          <span>{holderIds.length} of 3 policy holders</span>
+        </div>
         <fieldset>
           <legend>Property</legend>
           <label>Address line 1<input name="addressLine1" maxLength={200} autoComplete="address-line1" required /></label>

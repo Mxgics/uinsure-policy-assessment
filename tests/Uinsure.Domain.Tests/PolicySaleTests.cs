@@ -62,6 +62,17 @@ public sealed class PolicySaleTests
         else Assert.Throws<DomainValidationException>(action);
     }
 
+    [Fact]
+    public void Leap_day_holder_is_sixteen_on_february_twenty_eighth_when_anniversary_clamps()
+    {
+        var start = new DateOnly(2100, 2, 28);
+        var data = ValidData(startDate: start, holderBirthDate: new DateOnly(2084, 2, 29));
+
+        var policy = Policy.Sell("POL-LEAP-HOLDER", data, new DateOnly(2100, 1, 1), Now);
+
+        Assert.Equal(new DateOnly(2084, 2, 29), Assert.Single(policy.Terms).Policyholders.Single().DateOfBirth);
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(4)]
@@ -106,6 +117,19 @@ public sealed class PolicySaleTests
     {
         var data = ValidData(holderBirthDate: DateOnly.Parse(date));
         Assert.Throws<DomainValidationException>(() => Policy.Sell("POL-DOB", data, Today, Now));
+    }
+
+    [Fact]
+    public void Automatic_renewal_rejects_cheque_on_initial_sale()
+    {
+        var data = ValidData() with { PaymentMethod = PaymentMethod.Cheque };
+
+        var exception = Assert.Throws<DomainValidationException>(
+            () => Policy.Sell("POL-AUTO-CHEQUE", data, Today, Now));
+
+        Assert.Equal(
+            ["Automatic renewal requires Card or DirectDebit."],
+            exception.Errors["paymentMethod"]);
     }
 
     private static SellPolicyData ValidData(

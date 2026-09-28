@@ -2,7 +2,7 @@
 
 ## Branch and review workflow
 
-`main` is the default and only long-lived branch. Use descriptive `codex/` branches. Independent work starts from `main`. The original approved stack is now merged; the remaining delivery-stage 8 work is GitHub PR #9 against `main`. Stop for owner review and never merge without explicit instruction.
+`main` is the default and only long-lived branch. Use descriptive `codex/` branches. Independent work starts from `main`. Delivery stages 1–8, including GitHub PR #9, are merged. Stage 9 is the focused `codex/demo-usability` branch against `main`. Stop for owner review and never merge without explicit instruction.
 
 Keep commits reviewable. A commit should represent one understandable step and must not claim tests, Docker execution, or runtime behaviour that was not observed. Do not rewrite shared history or combine unrelated cleanup with a feature.
 
