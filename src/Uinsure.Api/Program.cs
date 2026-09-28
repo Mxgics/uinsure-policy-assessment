@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json.Nodes;
 using Microsoft.OpenApi;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Uinsure.Api.Errors;
@@ -13,7 +14,7 @@ using Uinsure.Domain.Policies;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddControllers()
+    .AddControllers(options => options.ModelMetadataDetailsProviders.Add(new SystemTextJsonValidationMetadataProvider()))
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new NamedEnumConverter<InsuranceType>());

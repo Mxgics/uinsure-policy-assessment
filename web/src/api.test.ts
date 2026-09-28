@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, policyApi } from './api'
+import { policyApi } from './api'
 
 afterEach(() => vi.unstubAllGlobals())
 
@@ -17,7 +17,7 @@ describe('API response boundary', () => {
   it('turns a malformed error body into a safe API error', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('<html>failure</html>', { status: 503 })))
 
-    await expect(policyApi.get('POL-TEST')).rejects.toMatchObject<ApiError>({
+    await expect(policyApi.get('POL-TEST')).rejects.toMatchObject({
       status: 503,
       message: 'Request failed (503)',
       problem: { title: 'Request failed (503)' },
