@@ -2,7 +2,7 @@
 
 ## Current phase
 
-PRs #1–#7 and delivery-stage 8 [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) are merged into `main` at `8c845fa`. Delivery stage 9 is implemented and locally verified on `codex/demo-usability`: opt-in stable synthetic scenarios, one-to-three-holder UI support, matching age/payment constraints and clearer lifecycle availability. The owner confirmed manual testing complete on 28 September 2026. The final submission review aligns documentation and makes mocked UI tests independent of the wall clock. Executed evidence belongs in the [test plan](test-plan.md); final PR review remains the gate before an explicitly authorized merge.
+PRs #1–#7 and delivery-stage 8 [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) are merged into `main` at `8c845fa`. Delivery stage 9 is published as [PR #10](https://github.com/Mxgics/uinsure-policy-assessment/pull/10) from `codex/demo-usability` and locally verified: opt-in stable synthetic scenarios, one-to-three-holder UI support, matching age/payment constraints and clearer lifecycle availability. The owner confirmed manual testing complete on 28 September 2026. The final submission review aligns documentation and makes mocked UI tests independent of the wall clock. Executed evidence belongs in the [test plan](test-plan.md); final PR review remains the gate before an explicitly authorized merge.
 
 ## Observed environment
 

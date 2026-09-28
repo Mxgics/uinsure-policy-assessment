@@ -16,7 +16,7 @@ Use small coherent commits, truthful evidence, and owner review. PRs #2–#7 wer
 | 6 | React UI | Accessible responsive workflows and real browser journeys verified | Merged |
 | 7 | Final readiness | Clean-clone proof, complete requirement evidence, walkthrough, limits and public-source review | Merged; historical checkpoint later qualified by review |
 | 8 | Review corrections and coherence | R1-R9, missing boundaries, property migration, UI recovery/accessibility, real browser/API/SQL proof and final coherence fixes | Merged as GitHub PR #9 |
-| 9 | Demo data and workflow usability | Opt-in repeatable fixtures, full holder UI, age/payment parity, clear renewal state and regression evidence | Implemented and locally verified on `codex/demo-usability`; owner manual testing complete; final PR review and publication CI tracked separately |
+| 9 | Demo data and workflow usability | Opt-in repeatable fixtures, full holder UI, age/payment parity, clear renewal state and regression evidence | Published as [PR #10](https://github.com/Mxgics/uinsure-policy-assessment/pull/10); local gates and owner manual testing complete; exact-head CI and final PR review tracked separately |
 
 Review delivery stage 9 only against current `main`. After explicit merge authorization, verify the resulting `main` commit and CI before the owner submits the repository.
 

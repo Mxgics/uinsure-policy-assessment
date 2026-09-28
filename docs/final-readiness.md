@@ -6,7 +6,7 @@ Delivery stages 1–8 are merged into `main` at `8c845fa`. Stage 9 on `codex/dem
 
 The owner confirmed manual testing complete and satisfactory on 28 September 2026. This is owner-reported acceptance, separate from automated evidence and final PR approval. The [current test summary](test-plan.md#current-candidate-summary) identifies the recorded checks and their boundaries.
 
-The repository is public and its default branch is `main`. Final PR review, an explicitly authorized merge, and verification of the resulting `main` are required before sending the repository. Exact-head CI is recorded in the final PR; older runs do not validate this candidate. The [submission checklist](review-and-submission-plan.md) sets out the remaining delivery steps.
+The repository is public and its default branch is `main`. Final PR review, an explicitly authorized merge, and verification of the resulting `main` are required before sending the repository. Exact-head CI is recorded in [PR #10](https://github.com/Mxgics/uinsure-policy-assessment/pull/10); older runs do not validate this candidate. The [submission checklist](review-and-submission-plan.md) sets out the remaining delivery steps.
 
 ## Assessment coverage
 

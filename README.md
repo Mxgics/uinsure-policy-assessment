@@ -70,7 +70,7 @@ The [project brief](docs/project-brief.md), [delivery plan](docs/project-plan.md
 
 ## Delivery status and boundaries
 
-Stages 1–8 are merged into `main`. Stage 9 on `codex/demo-usability` contains the final demo-usability and submission-documentation changes. The owner confirmed manual testing complete on 28 September 2026. Final PR review, explicit merge authorization and verification of the resulting `main` remain separate delivery gates; see the [submission checklist](docs/review-and-submission-plan.md).
+Stages 1–8 are merged into `main`. [PR #10](https://github.com/Mxgics/uinsure-policy-assessment/pull/10) on `codex/demo-usability` contains the final demo-usability and submission-documentation changes. The owner confirmed manual testing complete on 28 September 2026. Final PR review, explicit merge authorization and verification of the resulting `main` remain separate delivery gates; see the [submission checklist](docs/review-and-submission-plan.md).
 
 Dates use UTC today. The project explicitly interprets “over 16” as 16+, annual terms end the day before their anniversary, and the inclusive renewal window contains 31 dates. Automatic renewal remains a user-triggered demonstration action. Payments and refunds are recorded locally without provider settlement.
 

@@ -11,7 +11,7 @@ Candidate: delivery stage 9 on `codex/demo-usability`, based on merged `main` at
 | Browser contracts | 12 desktop/mobile Chromium tests passed | Intercepted API responses; fixed historical clock |
 | Full stack | 8 real browser/API/SQL journeys passed | Stage 9 local execution below; retains real UTC today |
 | Owner manual testing | Complete and satisfactory | Owner confirmation, separate from automated results and final PR approval |
-| Publication | Exact-head backend, frontend and fullstack CI tracked in the final PR | Merge and final-main verification require separate authorization |
+| Publication | Exact-head backend, frontend and fullstack CI tracked in [PR #10](https://github.com/Mxgics/uinsure-policy-assessment/pull/10) | Merge and final-main verification require separate authorization |
 
 The dated entries below are historical execution records. Statements that checks were pending describe that checkpoint, not necessarily the current candidate. No current-candidate clean-clone execution is claimed from an earlier clone.
 
@@ -201,3 +201,5 @@ No migration, response-schema change, scheduled renewal, production seed endpoin
 - Audited **150 candidate files**, including all four previously untracked delivery files, **31 Markdown files**, **75 local file/fragment links** and **4 heading anchors**. All targets resolved after correction. No forbidden generated/private file types or matches for the selected private-path, token, embedded-password and private-contact patterns were found. This is a targeted scan, not an exhaustive secret audit; external documentation URLs were not comprehensively checked.
 - `git diff --check` passed. Compared quick-start commands and pinned prerequisites with the maintained scripts, package commands and CI. Live GitHub metadata confirmed public visibility, default branch `main` and no existing open PR; the remote main tip matched `8c845fa`.
 - The owner confirmed manual testing complete and satisfactory. That confirmation is distinct from a per-case execution log. Backend/full-stack local evidence above was retained without claiming a rerun during this documentation and test-harness pass. Final publication CI is verified against the exact PR head and recorded in its description; merging and final-main verification remain separate gates.
+
+Publication: committed the reviewed candidate as `d3b20ae`, pushed `codex/demo-usability`, and opened [PR #10](https://github.com/Mxgics/uinsure-policy-assessment/pull/10) against `main`. A documentation-only follow-up links the published PR and records its first commit; final CI is checked on that follow-up head. The candidate contains 32 changed files, including all four previously untracked delivery files. No merge was performed.

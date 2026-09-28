@@ -1,6 +1,6 @@
 # Review, testing and submission plan
 
-Delivery stages 1–8, including [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9), are merged. Delivery stage 9 is the focused `codex/demo-usability` branch. Nothing in this plan authorizes a merge.
+Delivery stages 1–8, including [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9), are merged. Delivery stage 9 is [PR #10](https://github.com/Mxgics/uinsure-policy-assessment/pull/10), from `codex/demo-usability` to `main`. Nothing in this plan authorizes a merge.
 
 The owner confirmed manual testing complete on 28 September 2026 and authorized publishing a focused final PR. This does not authorize a merge or an external submission. Existing local automated results remain in the [test evidence](test-plan.md); the final PR records CI for its exact head.
 

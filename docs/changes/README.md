@@ -4,7 +4,7 @@ This folder records what each change did, why it was made, corrections discovere
 
 ## Existing PRs
 
-Checked against Git history and live PR metadata on 2026-09-27. Each numbered note was introduced in the corresponding implementation/documentation commit, rather than added only at final review.
+Historical PRs checked against Git history and live metadata on 2026-09-27; stage 9 publication added on 2026-09-28. Each numbered note was introduced in the corresponding implementation/documentation commit, rather than added only at final review.
 
 | PR | Explanation | First commit | Current delivery status |
 | --- | --- | --- | --- |
@@ -16,7 +16,7 @@ Checked against Git history and live PR metadata on 2026-09-27. Each numbered no
 | [6: React policy desk](https://github.com/Mxgics/uinsure-policy-assessment/pull/6) | [Browser workflows, UI decisions, and test boundaries](006-react-ui.md) | `021fe9b` | Merged |
 | [7: final readiness checkpoint](https://github.com/Mxgics/uinsure-policy-assessment/pull/7) | [Walkthrough, clean-clone checks, and delivery limits](007-final-readiness.md) | `ed1fc15` | Merged |
 | [9: delivery stage 8 corrections](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) | [Review fixes and browser-to-SQL evidence](008-review-fixes.md); [coherence findings](009-coherence-review.md) | `1d9eb57` | Merged into `main` at `8c845fa` |
-| Delivery stage 9 | [Demo data and workflow usability](010-demo-usability.md) | Pending | Local gates recorded; owner manual testing complete; publication CI and final PR review tracked separately |
+| [10: delivery stage 9](https://github.com/Mxgics/uinsure-policy-assessment/pull/10) | [Demo data and workflow usability](010-demo-usability.md) | `d3b20ae` | Published for final review; owner manual testing complete; exact-head CI tracked in the PR |
 
 ## Current review
 
