@@ -95,3 +95,9 @@ Earlier PR sections preserve their original observations. Current review and del
 - Compared the local repair checkpoint with source and live PR metadata; corrected the distinction between the already-updated PR base and the unpublished local head.
 - Reviewed private rehearsal claims against actual sale handling: a warning against manual resubmission is not an enforced submit lock or server idempotency. Updated the separate private ledger while preserving 64 questions.
 - Verification: 94 local Markdown targets resolved and diff whitespace checks passed. This review did not rerun application suites or complete final delivery gates; see the test plan.
+
+### Final clean-checkout gates — 2026-09-28
+
+- Executed the maintained gates in a separate local clone. Corrected comment formatting, a Required-validation camel-case key regression and a TypeScript partial-matcher compile error exposed by those gates; retained the failing regression rather than weakening its assertion.
+- Final local results on `2709595`: 38 domain, 72 API/SQL, 15 frontend, 10 mocked-browser and 8 full-stack tests passed. Exercised the disposable HTTP demo, reviewed rendered desktop/mobile output and keyboard focus, and verified cleanup.
+- Recorded migration/scan scope and remaining limits in the test plan. Current-head CI and owner review remain separate; no merge or recruiter message is authorized.

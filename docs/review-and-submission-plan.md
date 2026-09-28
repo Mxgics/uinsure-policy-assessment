@@ -1,6 +1,6 @@
 # Review, testing and submission plan
 
-Delivery stage 8 is [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9), targeting `main` after PRs #1–#7 merged, with the local ancestry repair still awaiting push. The branch and change-note numbering retain the agreed stage number. Nothing in this plan authorizes a merge.
+Delivery stage 8 is [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9), targeting `main` after PRs #1–#7 merged, with final local verification recorded in the test plan. The branch and change-note numbering retain the agreed stage number. Nothing in this plan authorizes a merge.
 
 ## 1. Owner review checkpoint
 

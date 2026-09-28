@@ -2,7 +2,7 @@
 
 - Date: 2026-09-27
 - Scope: repaired `codex/pr8-review-fixes` candidate against merged `main`
-- Status: confirmed behaviour fixes implemented; final complete gates and current-head CI pending
+- Status: fixes and final local gates verified on `2709595`; current-head CI and owner review pending
 
 This register separates confirmed defects from concerns and accepted limitations. Earlier stage 8 evidence remains historical in [008-review-fixes.md](008-review-fixes.md); executed current-candidate results belong in the [test evidence record](../test-plan.md).
 
@@ -22,3 +22,7 @@ No unresolved confirmed correctness defect remains in this register. Passing tar
 ## Repair evidence
 
 The former PR #9 tip `5b3c79f` is preserved as local branch `backup/pr9-before-main-merge-20260927`. Refreshed `origin/main` was `8d4f289`; its tree `145945b5…` exactly matched the recorded PR 7 baseline. All ancestry conflicts were therefore resolved to the correction side, and the staged tree `dabe9830…` exactly matched the backed-up tip before merge commit `5ed4e6d` was created. The resulting file comparison against `main` contains corrections and subsequent coherence work rather than repeated delivery of PRs #2–#7.
+
+## Final gate follow-up — 2026-09-28
+
+Clean-checkout verification caught a comment-formatting failure, a required-field error-key regression and a TypeScript test-matcher compile error. Commits `e877c0e` and `2709595` correct these without changing the agreed business rules. The existing missing-boolean test supplies the observed red case; the JSON validation metadata provider restores camel-case keys while Required annotations preserve the schema. Complete backend, frontend, mocked and real-browser gates then passed. The test plan records exact counts, rendered/keyboard checks, disposable HTTP demo, migration evidence and scan limits. Current-head CI and owner review remain separate gates.

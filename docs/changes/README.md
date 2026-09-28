@@ -16,7 +16,7 @@ Checked against Git history and live PR metadata on 2026-09-27. Each numbered no
 | [6: React policy desk](https://github.com/Mxgics/uinsure-policy-assessment/pull/6) | [Browser workflows, UI decisions, and test boundaries](006-react-ui.md) | `021fe9b` | Merged |
 | [7: final readiness checkpoint](https://github.com/Mxgics/uinsure-policy-assessment/pull/7) | [Walkthrough, clean-clone checks, and delivery limits](007-final-readiness.md) | `ed1fc15` | Merged |
 
-| [9: delivery stage 8 corrections](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) | [Review fixes and browser-to-SQL evidence](008-review-fixes.md); [coherence findings](009-coherence-review.md) | `1d9eb57` | Open against `main`; final gates and owner review pending |
+| [9: delivery stage 8 corrections](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) | [Review fixes and browser-to-SQL evidence](008-review-fixes.md); [coherence findings](009-coherence-review.md) | `1d9eb57` | Open against `main`; final local gates passed, current-head CI and owner review pending |
 
 ## Current review
 

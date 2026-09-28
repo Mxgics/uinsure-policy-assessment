@@ -15,7 +15,7 @@ Use small coherent commits, truthful evidence, and owner review. PRs #2–#7 wer
 | 5 | Renewal | Window, successor/history, payments/cheque, and mixed lifecycle races verified | Merged |
 | 6 | React UI | Accessible responsive workflows and real browser journeys verified | Merged |
 | 7 | Final readiness | Clean-clone proof, complete requirement evidence, walkthrough, limits and public-source review | Merged; historical checkpoint later qualified by review |
-| 8 | Review corrections and coherence | R1-R9, missing boundaries, property migration, UI recovery/accessibility, real browser/API/SQL proof and final coherence fixes | GitHub PR #9 open; final gates and owner review pending |
+| 8 | Review corrections and coherence | R1-R9, missing boundaries, property migration, UI recovery/accessibility, real browser/API/SQL proof and final coherence fixes | GitHub PR #9 open; final local gates passed, current-head CI and owner review pending |
 
 Review only GitHub PR #9 against `main`. After explicit merge authorization, verify the resulting `main` commit and CI before the owner submits the repository.
 

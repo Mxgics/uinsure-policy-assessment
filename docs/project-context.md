@@ -2,7 +2,7 @@
 
 ## Current phase
 
-PRs #1–#7 are merged. Delivery stage 8 remains [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) on `codex/pr8-review-fixes`. Its existing tip was backed up, current `origin/main` was merged without force-push, and the ancestry-conflict resolution was verified to reproduce the correction tip tree before coherence work. The [stage 8 note](changes/008-review-fixes.md) preserves its earlier clean-checkout evidence; the [coherence review](changes/009-coherence-review.md) records later fixes. Final complete gates and current-head CI remain pending before owner review.
+PRs #1–#7 are merged. Delivery stage 8 remains [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) on `codex/pr8-review-fixes`. Its existing tip was backed up, current `origin/main` was merged without force-push, and the ancestry-conflict resolution was verified to reproduce the correction tip tree before coherence work. The [stage 8 note](changes/008-review-fixes.md) preserves its earlier clean-checkout evidence; the [coherence review](changes/009-coherence-review.md) records later fixes. Final clean-checkout gates, rendered/keyboard review and the disposable demo passed on `2709595`; current-head CI remains pending before owner review.
 
 ## Observed environment
 
@@ -28,7 +28,7 @@ The repository contains only public project material and synthetic examples. Sup
 
 ## Known unresolved issues
 
-- GitHub PR #9 requires final clean-checkout verification, current-head CI and owner review; do not merge without explicit instruction.
+- GitHub PR #9 requires current-head CI and owner review; do not merge without explicit instruction.
 - Bedrooms removal is intentionally data-losing for that column; the runbook documents backup and guarded rollback. City is optional and Address Line 3 is retained.
 - Historical PR 3 red/green chronology remains unavailable; it has not been invented.
 - A repository licence has not been selected.
