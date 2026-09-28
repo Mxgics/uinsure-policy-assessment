@@ -53,6 +53,7 @@ internal static class Runner
                             _ => today.AddDays(-14)
                         };
                         var reference = $"POL-{Guid.NewGuid():N}"[..32].ToUpperInvariant();
+                        // Historical fixtures make renewal reachable without weakening the production clock.
                         var policy = Policy.Sell(reference, new SellPolicyData(
                             InsuranceType.Household, start, 365m, kind == "claims", kind != "manual",
                             [new PolicyholderData("Ada", "Example", new DateOnly(1990, 1, 1))],

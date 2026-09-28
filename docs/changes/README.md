@@ -9,18 +9,18 @@ Checked against Git history and live PR metadata on 2026-09-27. Each numbered no
 | PR | Explanation | First commit | Current delivery status |
 | --- | --- | --- | --- |
 | [1: documentation foundation](https://github.com/Mxgics/uinsure-policy-assessment/pull/1) | [Scope, assumptions, architecture, and documentation boundaries](001-project-foundation.md) | `a01d780` | Merged |
-| [2: API and SQL foundation](https://github.com/Mxgics/uinsure-policy-assessment/pull/2) | [Host, persistence tooling, errors, tests, and CI decisions](002-api-foundation.md) | `48646ce` | Open; CI successful |
-| [3: sell and retrieve](https://github.com/Mxgics/uinsure-policy-assessment/pull/3) | [Policy snapshots, validation, persistence, and test corrections](003-sell-and-retrieve.md) | `d3d1f62` | Open; CI successful |
-| [4: cancellation](https://github.com/Mxgics/uinsure-policy-assessment/pull/4) | [Refund calculation, atomic writes, and concurrency](004-cancellation.md) | `6286c90` | Open; CI successful |
-| [5: renewal](https://github.com/Mxgics/uinsure-policy-assessment/pull/5) | [Successors, payment choices, history, and lifecycle races](005-renewal.md) | `48b68e8` | Open; CI successful |
-| [6: React policy desk](https://github.com/Mxgics/uinsure-policy-assessment/pull/6) | [Browser workflows, UI decisions, and test boundaries](006-react-ui.md) | `021fe9b` | Open; CI successful |
-| [7: final readiness checkpoint](https://github.com/Mxgics/uinsure-policy-assessment/pull/7) | [Walkthrough, clean-clone checks, and delivery limits](007-final-readiness.md) | `ed1fc15` | Open; CI successful at `806ecab` |
+| [2: API and SQL foundation](https://github.com/Mxgics/uinsure-policy-assessment/pull/2) | [Host, persistence tooling, errors, tests, and CI decisions](002-api-foundation.md) | `48646ce` | Merged |
+| [3: sell and retrieve](https://github.com/Mxgics/uinsure-policy-assessment/pull/3) | [Policy snapshots, validation, persistence, and test corrections](003-sell-and-retrieve.md) | `d3d1f62` | Merged |
+| [4: cancellation](https://github.com/Mxgics/uinsure-policy-assessment/pull/4) | [Refund calculation, atomic writes, and concurrency](004-cancellation.md) | `6286c90` | Merged |
+| [5: renewal](https://github.com/Mxgics/uinsure-policy-assessment/pull/5) | [Successors, payment choices, history, and lifecycle races](005-renewal.md) | `48b68e8` | Merged |
+| [6: React policy desk](https://github.com/Mxgics/uinsure-policy-assessment/pull/6) | [Browser workflows, UI decisions, and test boundaries](006-react-ui.md) | `021fe9b` | Merged |
+| [7: final readiness checkpoint](https://github.com/Mxgics/uinsure-policy-assessment/pull/7) | [Walkthrough, clean-clone checks, and delivery limits](007-final-readiness.md) | `ed1fc15` | Merged |
 
-| [9: delivery stage 8 corrections](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) | [Review fixes and browser-to-SQL evidence](008-review-fixes.md) | `1d9eb57` | Open; owner review pending |
+| [9: delivery stage 8 corrections](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) | [Review fixes and browser-to-SQL evidence](008-review-fixes.md); [coherence findings](009-coherence-review.md) | `1d9eb57` | Open against `main`; final gates and owner review pending |
 
 ## Current review
 
-The [2026-09-27 review checkpoint](review-checkpoint-2026-09-27.md) preserves the findings at PR 7. The [PR 8 explanation](008-review-fixes.md) maps each correction to regression evidence and records the real browser-to-SQL suite. The [approved plan](../review-remediation-plan.md) supersedes the earlier four-PR proposal. Owner review/merge remains pending. Stage 8 was assigned GitHub PR #9; see the [review, testing and submission plan](../review-and-submission-plan.md).
+The [2026-09-27 review checkpoint](review-checkpoint-2026-09-27.md) preserves the findings at PR 7. The [stage 8 explanation](008-review-fixes.md) maps each original correction to regression evidence; the [coherence register](009-coherence-review.md) records later confirmed defects, concerns and dispositions. PRs #1–#7 are merged. Owner review/merge of GitHub PR #9 remains pending; see the [review, testing and submission plan](../review-and-submission-plan.md).
 
 Supporting records:
 

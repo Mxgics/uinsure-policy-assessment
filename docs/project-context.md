@@ -2,9 +2,7 @@
 
 ## Current phase
 
-PR 8 on `codex/pr8-review-fixes`, based on PR 7 at `806ecab`, implements the nine review corrections and real browser-to-SQL verification. Local verification passed: 38 domain, 72 API/SQL, eight component, ten browser-contract and eight real full-stack checks. The [PR 8 note](changes/008-review-fixes.md) records corrections and evidence; the same suites passed in a clean checkout at `50f4151`, with successful three-job CI. Delivery stage 8 is GitHub PR #9. See the [review and submission plan](review-and-submission-plan.md) for the owner checkpoint and final-head CI gate. Owner review remains pending.
-
-After PR 1 merged, the owner approved a stacked workflow: PRs 2–7 are implemented continuously as dependent branches and reviewed/merged bottom-up.
+PRs #1–#7 are merged. Delivery stage 8 remains [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) on `codex/pr8-review-fixes`. Its existing tip was backed up, current `origin/main` was merged without force-push, and the ancestry-conflict resolution was verified to reproduce the correction tip tree before coherence work. The [stage 8 note](changes/008-review-fixes.md) preserves its earlier clean-checkout evidence; the [coherence review](changes/009-coherence-review.md) records later fixes. Final complete gates and current-head CI remain pending before owner review.
 
 ## Observed environment
 
@@ -30,8 +28,8 @@ The repository contains only public project material and synthetic examples. Sup
 
 ## Known unresolved issues
 
-- PR 8 requires owner review and bottom-up merge after the original stack.
+- GitHub PR #9 requires final clean-checkout verification, current-head CI and owner review; do not merge without explicit instruction.
 - Bedrooms removal is intentionally data-losing for that column; the runbook documents backup and guarded rollback. City is optional and Address Line 3 is retained.
 - Historical PR 3 red/green chronology remains unavailable; it has not been invented.
 - A repository licence has not been selected.
-- Live GitHub inspection on 2026-09-27 found successful CI for PRs 2-7. PR 1 is merged; PRs 2-7 remain open for owner review and bottom-up merge.
+- PR #9 history still contains the original stacked commits, but its file comparison against `main` contains only stage 8 corrections and later coherence work.

@@ -81,3 +81,17 @@ Earlier PR sections preserve their original observations. Current review and del
 - Verification: maintained backend gate passed 38 domain and 72 API/SQL tests with a clean Release build; frontend build/eight component tests, ten intercepted browser tests and eight actual browser/API/SQL journeys passed. Desktop/mobile captures were inspected. Clean-checkout and final-head CI evidence are recorded separately.
 - Environment: Docker startup temporarily failed on stale runtime sockets after an interruption; preserved the verified socket-only directories and restored the engine. No database substitution or Docker data reset was used.
 - Limits: unauthenticated local assessment, recorded rather than settled payments, no sale idempotency or deployment. Bedrooms migration discards that column and refuses populated rollback. Historical review/verification entries remain dated observations.
+
+## PR #9 repair and coherence review
+
+- Task: preserve the existing correction PR, repair its ancestry against merged `main`, review the combined implementation and reconcile public/private explanations.
+- Assistance: verified Git/GitHub state, preserved the old tip, compared baseline trees, resolved ancestry-only conflicts, traced API/domain/SQL/UI paths, wrote failing boundary regressions, added concise rationale comments, and reconciled documentation.
+- Corrections: uncertain sale outcomes no longer invite retries; malformed or unusable responses cannot replace rendered state; required/non-null OpenAPI sale fields match the accepted contract; quote results show their date; UI premiums stay within JavaScript-safe pence.
+- Judgment: retained the settled architecture and scope, used focused runtime guards instead of a validation framework, and recorded UTC-midnight defaults and field-level error association as explicit demo limitations rather than expanding product scope.
+- Evidence: targeted red/green results are in `docs/test-plan.md`; the final complete gates and current-head CI remain separate pending evidence. No merge or recruiter submission is authorized.
+
+### Checkpoint documentation review
+
+- Compared the local repair checkpoint with source and live PR metadata; corrected the distinction between the already-updated PR base and the unpublished local head.
+- Reviewed private rehearsal claims against actual sale handling: a warning against manual resubmission is not an enforced submit lock or server idempotency. Updated the separate private ledger while preserving 64 questions.
+- Verification: 94 local Markdown targets resolved and diff whitespace checks passed. This review did not rerun application suites or complete final delivery gates; see the test plan.

@@ -1,6 +1,6 @@
 # ADR 002: Assessment property fields and real browser evidence
 
-- Status: Accepted and locally verified in PR 8
+- Status: Accepted and locally verified in delivery stage 8 (GitHub PR #9)
 - Date: 2026-09-27
 
 ## Decision

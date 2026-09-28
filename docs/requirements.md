@@ -1,6 +1,6 @@
-# Requirements and planned evidence
+# Requirements and evidence
 
-Status after PR 8 local verification: the nine findings at the [historical review baseline](changes/review-checkpoint-2026-09-27.md) are corrected with regression evidence. The [PR 8 note](changes/008-review-fixes.md) maps findings to named tests; the [test plan](test-plan.md) records actual results and remaining delivery checks. Owner review and merge remain pending.
+PRs #1–#7 are merged. Delivery stage 8 is open GitHub PR #9. The nine findings at the [historical review baseline](changes/review-checkpoint-2026-09-27.md) and the later [coherence findings](changes/009-coherence-review.md) have regression-backed fixes. The [test plan](test-plan.md) is the single source for actual results and remaining delivery checks; final current-head CI, owner review and merge remain pending.
 
 | ID | Requirement | Planned evidence | Target PR | Status |
 | --- | --- | --- | --- | --- |

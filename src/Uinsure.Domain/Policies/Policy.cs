@@ -46,6 +46,7 @@ public sealed class Policy
             throw new DomainConflictException("A policy term with an active successor cannot be cancelled.");
         }
         var cancellation = term.Cancel(date, recordedAtUtc);
+        // Child inserts must also update the aggregate root so cancel/renew races share one rowversion boundary.
         MutationRevision++;
         return cancellation;
     }
@@ -87,6 +88,7 @@ public sealed class Policy
 
         var successor = PolicyTerm.CreateRenewal(Id, term, paymentMethod, recordedAtUtc);
         _terms.Add(successor);
+        // Child inserts must also update the aggregate root so cancel/renew races share one rowversion boundary.
         MutationRevision++;
         return successor;
     }

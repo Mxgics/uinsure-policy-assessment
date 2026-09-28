@@ -4,7 +4,7 @@ These decisions make ambiguous assessment wording executable. They are project c
 
 ## Property contract clarification - 2026-09-27
 
-The owner approved PR 8 to add Address Line 3, retain optional City, and remove Bedrooms. Only Address Line 1 and Postcode are required by the property contract. Optional blank lines/City normalize to null. Neither City nor Bedrooms is required by the assessment. The [property decision](decisions/002-property-contract-and-browser-evidence.md) supersedes the earlier optional-Bedrooms proposal and explains migration/compatibility consequences.
+The owner approved delivery stage 8 (GitHub PR #9) to add Address Line 3, retain optional City, and remove Bedrooms. Only Address Line 1 and Postcode are required by the property contract. Optional blank lines/City normalize to null. Neither City nor Bedrooms is required by the assessment. The [property decision](decisions/002-property-contract-and-browser-evidence.md) supersedes the earlier optional-Bedrooms proposal and explains migration/compatibility consequences.
 
 ## Dates and eligibility
 

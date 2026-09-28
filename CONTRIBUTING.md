@@ -2,7 +2,7 @@
 
 ## Branch and review workflow
 
-`main` is the default and only long-lived branch. Use descriptive `codex/` branches. Independent work starts from `main`; an approved stack targets each PR at its immediate predecessor. Review and merge bottom-up, retargeting the next PR to `main` after its base merges.
+`main` is the default and only long-lived branch. Use descriptive `codex/` branches. Independent work starts from `main`. The original approved stack is now merged; the remaining delivery-stage 8 work is GitHub PR #9 against `main`. Stop for owner review and never merge without explicit instruction.
 
 Keep commits reviewable. A commit should represent one understandable step and must not claim tests, Docker execution, or runtime behaviour that was not observed. Do not rewrite shared history or combine unrelated cleanup with a feature.
 

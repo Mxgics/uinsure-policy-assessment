@@ -110,3 +110,20 @@ Clean-checkout, repository privacy/link checks and final-head CI results are app
 On 2026-09-27, a separate local clone of `50f415146b14a1ace88e3e3374aab5f928784be7` passed the maintained backend gate (38 domain, 72 API/SQL; zero skips, build warnings or errors), `npm ci`, production build, eight component tests, ten intercepted browser tests, and eight real browser/API/SQL journeys with fresh SQL assertions and cleanup. Its working tree remained clean. Initial restricted-process attempts failed at restore and Vite child-process startup; rerunning with the required host access passed without changing code.
 
 [CI run 36335909255](https://github.com/Mxgics/uinsure-policy-assessment/actions/runs/36335909255) passed on that commit, including backend, frontend and fullstack jobs. The subsequent documentation-only delivery commit records these results and the [review/testing/submission plan](review-and-submission-plan.md); its own current-head CI result belongs in the live [PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) review checkpoint. The planned stage number remains 8.
+
+## Repaired PR #9 coherence evidence — 2026-09-27
+
+Historical counts above are not current-candidate results. The repaired branch added genuine red/green regressions before its final complete gates:
+
+- Frontend red: six failures reproduced invalid/empty/unusable success bodies, malformed error bodies, uncertain-sale retry wording, and unusable sale success; the focused rerun passed 14/14 after the response-boundary fix.
+- OpenAPI red: the sale schema had no `required` set; after required/non-null schema correction the isolated test passed 1/1.
+- UI red: quote date was absent and the premium input had no JavaScript-safe upper bound; the focused rerun passed 15/15 across the component and API-boundary files.
+- The first sandboxed Vite run failed to spawn its helper; the authorized host rerun produced the behavioural red evidence. An initial isolated .NET invocation hung before output and was terminated; the host run then exposed a test compilation correction before the genuine schema failure. Neither infrastructure attempt is counted as a passing test.
+
+The final maintained backend, frontend, mocked-browser and fullstack commands remain to be recorded below after they run from a clean checkout of the exact candidate. Current-head CI is also pending; older green stage 8 runs do not satisfy that gate.
+
+### Checkpoint documentation review — 2026-09-27
+
+At local HEAD `76abadb7ac9495bf55f30fffc483d4e72b902ede`, reviewed the uncommitted explanatory comments and delivery status. Live GitHub metadata showed PR #9 already targets `main`, but its remote head remains `5b3c79f1af74192ed7d1ef99703c3dc81b1e2534` and is reported unmergeable. Publishing the local repair and updating the obsolete PR description remain pending.
+
+Checked 94 local Markdown file targets across public README/contribution/docs and the separate private question pack: none were unresolved. Anchors and external URLs were not validated. `git diff --check` passed; Git reported line-ending normalization notices for two commented source files. All 64 private core question headings remain present. No application suite, full privacy/secret scan, rendered review or migration exercise was executed in this documentation review; final candidate gates above remain pending.

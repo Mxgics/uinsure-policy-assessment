@@ -1,6 +1,6 @@
 # Review, testing and submission plan
 
-Delivery stage 8 is [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9), targeting PR #7. The branch and change-note numbering retain the agreed plan's stage number. Nothing in this plan authorizes a merge.
+Delivery stage 8 is [GitHub PR #9](https://github.com/Mxgics/uinsure-policy-assessment/pull/9), targeting `main` after PRs #1–#7 merged, with the local ancestry repair still awaiting push. The branch and change-note numbering retain the agreed stage number. Nothing in this plan authorizes a merge.
 
 ## 1. Owner review checkpoint
 
@@ -38,14 +38,12 @@ For an owner walkthrough, use `pwsh -File scripts/Test-FullStack.ps1 -Serve` and
 
 Before approving, check all three CI jobs on the current PR head: backend, frontend and fullstack. Do not substitute an older green run. Inspect failed-test artifacts rather than retrying unexplained failures. See [executed evidence](test-plan.md) for actual results and boundaries.
 
-## 3. Merge the stack only after explicit approval
+## 3. Merge PR #9 only after explicit approval
 
-Review and merge from the bottom: PR #2, #3, #4, #5, #6, #7, then #9. PR #1 is already merged. Inspect each PR's current base/diff and checks before merging; do not assume GitHub has retargeted dependent PRs correctly.
-
-Prefer merge commits for this existing stack so ancestry is retained. If squash or rebase merging is chosen, restack the remaining branches deliberately and rerun their checks; do not blindly merge repeated ancestor changes. After each merge, retarget the next PR to `main` where appropriate, verify the resulting diff, and wait for the relevant checks. Stop if conflicts or new findings arise.
+PRs #1–#7 are already merged. Confirm PR #9 still targets `main`, its file diff contains only corrections/coherence work, and backend, frontend and fullstack checks passed on the exact reviewed head. Then stop for explicit owner authorization. Do not merge on the strength of an older green correction-branch run.
 
 ## 4. Final submission checkpoint
 
-After the approved stack reaches `main`, verify a fresh checkout and the final `main` CI run. Update delivery status with the actual merged commit and results. Confirm the README's run instructions and assumptions, and scan tracked files for private material or generated credentials. Keep the public change explanations and private evidence ledger aligned.
+After an authorized PR #9 merge, verify a fresh checkout and the final `main` CI run. Update delivery status with the actual merged commit and results. Confirm the README's run instructions and assumptions, and scan tracked files for private material or generated credentials. Keep the public change explanations and private evidence ledger aligned.
 
 The owner then sends the repository link and availability to the recruiter. No external message or submission is authorized by this plan. Authentication, real payment settlement, production hosting and other documented non-goals remain outside this assessment.

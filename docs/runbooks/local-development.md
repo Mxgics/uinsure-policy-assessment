@@ -61,7 +61,38 @@ Use the restore/format/build/test commands in `.github/workflows/ci.yml` for Lin
 
 Ordinary API startup never migrates automatically. Stop the API, correct configuration/engine health, rerun the explicit migration, and restart. The PR 2 migration is schema-empty by design; later schema migrations document their own compatibility and rollback.
 
-## PR 8 property migration
+## Synthetic HTTP walkthrough
+
+With `Start-Local.ps1` running, these PowerShell examples reuse the server-created reference and term identifier:
+
+```powershell
+$base = 'http://127.0.0.1:5080'
+$today = [DateTime]::UtcNow.ToString('yyyy-MM-dd')
+$sale = @{
+  type = 'Household'; startDate = $today; premium = 365.00
+  hasClaims = $false; autoRenew = $true; paymentMethod = 'Card'
+  policyholders = @(@{ firstName = 'Ada'; lastName = 'Example'; dateOfBirth = '1990-01-01' })
+  property = @{ addressLine1 = '1 Synthetic Road'; addressLine2 = $null; addressLine3 = 'Third line'; city = $null; postcode = 'M1 1AA' }
+} | ConvertTo-Json -Depth 4
+$created = Invoke-RestMethod "$base/api/policies" -Method Post -ContentType 'application/json' -Body $sale
+$reference = $created.reference
+$termId = $created.terms[0].id
+$policy = Invoke-RestMethod "$base/api/policies/$reference"
+$quote = Invoke-RestMethod "$base/api/policies/$reference/terms/$termId/cancellation-quote?date=$today"
+$cancelled = Invoke-RestMethod "$base/api/policies/$reference/terms/$termId/cancellations" -Method Post
+```
+
+A same-day sale is not in its renewal window. Start the disposable historical demonstration below, take a printed paid or manual `$reference` and `$termId`, then call:
+
+```powershell
+$base = 'http://127.0.0.1:5081'
+$renewed = Invoke-RestMethod "$base/api/policies/$reference/terms/$termId/renewals" -Method Post -ContentType 'application/json' -Body '{"paymentMethod":"Card"}'
+# For a printed manual fixture use: -Body '{"paymentMethod":null}'
+```
+
+Use only synthetic values. Cancellation changes state, so create another disposable policy when repeating the example.
+
+## Delivery-stage 8 property migration
 
 `AlignPropertyContract` adds optional Address Line 3, makes City nullable, and removes Bedrooms. Stop the application and back up any retained database before using the explicit migration script. Bedroom values are deliberately discarded; all other property/history/financial values are preserved. Existing clients must tolerate nullable City and the removed Bedrooms response member.
 
