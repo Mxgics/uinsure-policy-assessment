@@ -4,7 +4,7 @@ This path demonstrates the assessment without requiring knowledge of the impleme
 
 ## Run
 
-1. Follow the [local runbook](runbooks/local-development.md) to start SQL Server, apply migrations, and run the API.
+1. Follow the [local runbook](runbooks/local-development.md) and use `pwsh -File scripts/Start-Local.ps1 -SeedDemo` to start SQL Server, apply migrations, seed six synthetic scenarios and run the API.
 2. From `web/`, run `npm ci` then `npm run dev`; open `http://127.0.0.1:5173`.
 3. Keep `/openapi/v1.json` available for the explicit HTTP contract and `/health` for process liveness.
 
@@ -14,7 +14,7 @@ This path demonstrates the assessment without requiring knowledge of the impleme
 2. Reload it by reference. Explain that holder/property values are term snapshots and the stable policy reference owns ordered history.
 3. Request a hypothetical cancellation quote. Explain cooling-off precedence, unused-day calculation, final rounding, and that the quote writes nothing.
 4. Confirm cancellation. Explain the fresh calculation for today, optional same-method Refund row, one transaction, shared policy revision, and 409 conflict refresh.
-5. For renewal, start the disposable historical demo with `pwsh -File scripts/Test-FullStack.ps1 -Serve` and use a printed paid/manual fixture reference at `http://127.0.0.1:5174`. A new same-day sale cannot naturally enter its renewal window. Explain inclusive end-minus-30 through end, automatic Card/DirectDebit versus manual unpaid renewal, copied snapshots, and claims reset.
+5. Expand **Try a prepared policy** and load one automatic and one manual scenario. Explain inclusive end-minus-30 through end, explicit automatic Card/DirectDebit payment versus manual unpaid renewal, copied holders/property, and claims reset. Use the cancellation refund/claims scenarios for positive- and zero-refund outcomes.
 6. Explain that Address Line 3 is retained in history, City is optional, and Bedrooms was removed after requirements review. A failed refresh following a confirmed mutation keeps success visible and requires GET-only recovery before another change.
 
 ## Navigate the implementation

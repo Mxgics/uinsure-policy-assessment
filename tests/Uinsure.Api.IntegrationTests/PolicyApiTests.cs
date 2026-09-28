@@ -111,6 +111,29 @@ public sealed class PolicyApiTests : IClassFixture<SqlServerFixture>, IAsyncLife
             (await _client.GetAsync($"/api/policies/POL-WRONG/terms/{termId}")).StatusCode);
     }
 
+    [Fact]
+    public async Task Automatic_renewal_with_cheque_is_validation_and_writes_nothing()
+    {
+        int policyCountBefore;
+        await using (var beforeContext = _sql.CreateContext())
+        {
+            policyCountBefore = await beforeContext.Policies.CountAsync();
+        }
+
+        var sale = ValidSale();
+        sale["paymentMethod"] = "Cheque";
+
+        var response = await _client.PostAsJsonAsync("/api/policies", sale);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var problem = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Contains(
+            "Automatic renewal requires Card or DirectDebit.",
+            problem.GetProperty("errors").GetProperty("paymentMethod")[0].GetString());
+        await using var afterContext = _sql.CreateContext();
+        Assert.Equal(policyCountBefore, await afterContext.Policies.CountAsync());
+    }
+
     private static Dictionary<string, object?> ValidSale() => new()
     {
         ["type"] = "Household",

@@ -15,12 +15,12 @@ Checked against Git history and live PR metadata on 2026-09-27. Each numbered no
 | [5: renewal](https://github.com/Mxgics/uinsure-policy-assessment/pull/5) | [Successors, payment choices, history, and lifecycle races](005-renewal.md) | `48b68e8` | Merged |
 | [6: React policy desk](https://github.com/Mxgics/uinsure-policy-assessment/pull/6) | [Browser workflows, UI decisions, and test boundaries](006-react-ui.md) | `021fe9b` | Merged |
 | [7: final readiness checkpoint](https://github.com/Mxgics/uinsure-policy-assessment/pull/7) | [Walkthrough, clean-clone checks, and delivery limits](007-final-readiness.md) | `ed1fc15` | Merged |
-
-| [9: delivery stage 8 corrections](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) | [Review fixes and browser-to-SQL evidence](008-review-fixes.md); [coherence findings](009-coherence-review.md) | `1d9eb57` | Open against `main`; final local gates passed, current-head CI and owner review pending |
+| [9: delivery stage 8 corrections](https://github.com/Mxgics/uinsure-policy-assessment/pull/9) | [Review fixes and browser-to-SQL evidence](008-review-fixes.md); [coherence findings](009-coherence-review.md) | `1d9eb57` | Merged into `main` at `8c845fa` |
+| Delivery stage 9 | [Demo data and workflow usability](010-demo-usability.md) | Pending | Local gates recorded; owner manual testing complete; publication CI and final PR review tracked separately |
 
 ## Current review
 
-The [2026-09-27 review checkpoint](review-checkpoint-2026-09-27.md) preserves the findings at PR 7. The [stage 8 explanation](008-review-fixes.md) maps each original correction to regression evidence; the [coherence register](009-coherence-review.md) records later confirmed defects, concerns and dispositions. PRs #1–#7 are merged. Owner review/merge of GitHub PR #9 remains pending; see the [review, testing and submission plan](../review-and-submission-plan.md).
+The [2026-09-27 review checkpoint](review-checkpoint-2026-09-27.md) preserves the findings at PR 7. The [stage 8 explanation](008-review-fixes.md) maps each original correction to regression evidence; the [coherence register](009-coherence-review.md) records later confirmed defects, concerns and dispositions. Those corrections are merged. Stage 9 is a separate focused usability change and remains at its owner-review gate.
 
 Supporting records:
 

@@ -89,6 +89,16 @@ builder.Services.AddDbContext<UinsureDbContext>((services, options) =>
 
 var app = builder.Build();
 
+if (args.Contains("--seed-demo-data", StringComparer.OrdinalIgnoreCase))
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    await DemoDataSeeder.SeedAsync(
+        scope.ServiceProvider.GetRequiredService<UinsureDbContext>(),
+        scope.ServiceProvider.GetRequiredService<TimeProvider>());
+    Console.WriteLine($"Seeded synthetic demo policies: {string.Join(", ", DemoDataSeeder.References)}");
+    return;
+}
+
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 app.MapOpenApi();

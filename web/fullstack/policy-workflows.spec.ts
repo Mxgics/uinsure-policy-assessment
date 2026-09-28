@@ -65,7 +65,7 @@ for (const kind of ['paid', 'manual']) {
     await find(page, fixture.reference)
     if (kind === 'paid') await page.getByLabel('Payment method').selectOption('DirectDebit')
     const renewed = page.waitForResponse(r => r.url().endsWith('/renewals'))
-    await page.getByRole('button', { name: 'Renew term' }).click()
+    await page.getByRole('button', { name: kind === 'paid' ? 'Record automatic renewal' : 'Create unpaid renewal' }).click()
     const response = await renewed
     expect(response.status()).toBe(201)
     const successor = await response.json()

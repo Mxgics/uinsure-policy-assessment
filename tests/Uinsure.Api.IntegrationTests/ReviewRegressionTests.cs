@@ -149,6 +149,7 @@ public sealed class ReviewRegressionTests(SqlServerFixture sql) : IClassFixture<
         var sale = Sale();
         sale["type"] = " " + type.ToLowerInvariant() + " ";
         sale["paymentMethod"] = " " + method.ToLowerInvariant() + " ";
+        if (method == "Cheque") sale["autoRenew"] = false;
         await using var factory = Factory();
         using var client = factory.CreateClient();
         var response = await client.PostAsJsonAsync("/api/policies", sale);

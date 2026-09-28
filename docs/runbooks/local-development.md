@@ -20,6 +20,14 @@ pwsh -File scripts/Start-Local.ps1
 
 `Start-Local.ps1` also starts SQL and applies migrations. The API listens at `http://127.0.0.1:5080`; liveness is `/health` and OpenAPI is `/openapi/v1.json`.
 
+To replace the six stable synthetic demonstration records and then start the API, use:
+
+```powershell
+pwsh -File scripts/Start-Local.ps1 -SeedDemo
+```
+
+This transactionally resets only the six exact documented `POL-DEMO-…` references. User-created policies remain untouched. The records are recalculated from UTC today so automatic/manual examples are inside the renewal window and cancellation examples are actionable. The UI disclosure loads them by reference; normal startup seeds nothing.
+
 In a second terminal, start the React demonstration:
 
 ```powershell
@@ -29,6 +37,8 @@ npm run dev
 ```
 
 Open `http://127.0.0.1:5173`. Vite proxies `/api` to the loopback API; there is no broad CORS policy and no policy data is placed in browser storage.
+
+For a clean-database, requirement-by-requirement browser exercise, follow the [manual testing plan](../manual-testing-plan.md).
 
 ```powershell
 pwsh -File scripts/Test-Local.ps1
@@ -58,6 +68,7 @@ Use the restore/format/build/test commands in `.github/workflows/ci.yml` for Lin
 - A migration lacks its connection string: run the scripts or export `ConnectionStrings__Uinsure` as above.
 - Port `14333` is busy: stop the conflict or deliberately update Compose and the documented connection string; never expose SQL on all interfaces.
 - Locked restore fails: dependency declarations and committed lockfiles differ; regenerate intentionally and review the full graph/advisories.
+- A prepared-policy lookup returns 404: restart the stopped API with `pwsh -File scripts/Start-Local.ps1 -SeedDemo`; the scenario shortcuts are labels, not a seed endpoint.
 
 Ordinary API startup never migrates automatically. Stop the API, correct configuration/engine health, rerun the explicit migration, and restart. The PR 2 migration is schema-empty by design; later schema migrations document their own compatibility and rollback.
 

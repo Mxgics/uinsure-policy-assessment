@@ -218,7 +218,7 @@ public sealed class CancellationApiTests(SqlServerFixture sql) : IClassFixture<S
             startDate = "2026-10-01",
             premium = 365.00m,
             hasClaims,
-            autoRenew = true,
+            autoRenew = paymentMethod != "Cheque",
             policyholders = new[] { new { firstName = "A", lastName = "B", dateOfBirth = "1990-01-01" } },
             property = new { addressLine1 = "1 Road", city = "Town", postcode = "M1 1AA", bedrooms = 2 },
             paymentMethod

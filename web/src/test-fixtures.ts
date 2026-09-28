@@ -3,8 +3,8 @@ import type { Policy, PolicyTerm } from './types'
 export const term: PolicyTerm = {
   id: '11111111-1111-1111-1111-111111111111',
   predecessorTermId: null,
-  startDate: '2026-10-01',
-  endDate: '2027-09-30',
+  startDate: '2025-10-13',
+  endDate: '2026-10-12',
   premium: 365,
   hasClaims: false,
   autoRenew: true,

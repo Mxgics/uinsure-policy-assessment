@@ -1,6 +1,11 @@
 import { expect, test, type Page } from '@playwright/test'
 import { policy, quote, term } from '../src/test-fixtures'
 
+test.beforeEach(async ({ page }) => {
+  // Match the historical contracts; the real full-stack suite retains UTC today.
+  await page.clock.setFixedTime('2026-09-28T09:00:00Z')
+})
+
 async function json(page: Page, url: string, body: unknown, status = 200) {
   await page.route(url, route => route.fulfill({ status, contentType: 'application/json', body: JSON.stringify(body) }))
 }
@@ -14,15 +19,38 @@ test('long policy references fit the viewport without hiding actions', async ({ 
   await expect(page.getByRole('heading', { name: reference })).toBeVisible()
   await page.screenshot({ path: `test-results/long-reference-${info.project.name}.png`, fullPage: true })
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width)
-  await page.getByRole('button', { name: 'Renew term' }).click({ trial: true })
+  await page.getByRole('button', { name: 'Record automatic renewal' }).click({ trial: true })
 })
 
-test('sell and display a policy', async ({ page }, testInfo) => {
-  await json(page, '**/api/policies', policy, 201)
+test('prepared policy disclosure is keyboard accessible and collapses after loading', async ({ page }) => {
+  const reference = 'POL-DEMO-AUTO-HH'
+  await json(page, `**/api/policies/${reference}`, { ...policy, reference })
   await page.goto('/')
-  await page.getByLabel('First name').fill('Ada')
-  await page.getByLabel('Last name').fill('Lovelace')
-  await page.getByLabel('Date of birth').fill('1990-01-01')
+  const disclosure = page.locator('details.demo-panel')
+  const summary = disclosure.locator('summary')
+  await summary.focus()
+  await page.keyboard.press('Enter')
+  await expect(disclosure).toHaveAttribute('open', '')
+  await page.getByRole('button', { name: /Automatic · Household/ }).click()
+  await expect(page.getByRole('heading', { name: reference })).toBeVisible()
+  await expect(disclosure).not.toHaveAttribute('open', '')
+})
+
+test('sell three holders and display the complete policy', async ({ page }, testInfo) => {
+  const holders = [
+    { firstName: 'Ada', lastName: 'Lovelace', dateOfBirth: '1990-01-01' },
+    { firstName: 'Grace', lastName: 'Hopper', dateOfBirth: '1988-02-02' },
+    { firstName: 'Katherine', lastName: 'Johnson', dateOfBirth: '1986-03-03' },
+  ]
+  await json(page, '**/api/policies', { ...policy, terms: [{ ...term, policyholders: holders }] }, 201)
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Add another policy holder' }).click()
+  await page.getByRole('button', { name: 'Add another policy holder' }).click()
+  for (let index = 0; index < holders.length; index++) {
+    await page.getByLabel('First name').nth(index).fill(holders[index].firstName)
+    await page.getByLabel('Last name').nth(index).fill(holders[index].lastName)
+    await page.getByLabel('Date of birth').nth(index).fill(holders[index].dateOfBirth)
+  }
   await page.getByLabel('Address line 1').fill('1 Test Road')
   await page.getByLabel('Town or city').fill('Manchester')
   await page.getByLabel('Postcode').fill('M1 1AA')
@@ -30,6 +58,8 @@ test('sell and display a policy', async ({ page }, testInfo) => {
 
   await expect(page.getByRole('heading', { name: policy.reference })).toBeVisible()
   await expect(page.getByText('£365.00')).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Policy holders (3)' })).toBeVisible()
+  await expect(page.getByText('Katherine Johnson')).toBeVisible()
   await page.screenshot({ path: `test-results/ui-${testInfo.project.name}.png`, fullPage: true })
 })
 
@@ -104,8 +134,8 @@ test('renew and display successor history', async ({ page }) => {
     ...term,
     id: '22222222-2222-2222-2222-222222222222',
     predecessorTermId: term.id,
-    startDate: '2027-10-01',
-    endDate: '2028-09-30',
+    startDate: '2026-10-13',
+    endDate: '2027-10-12',
     state: 'Scheduled',
   }
   let getCount = 0
@@ -118,8 +148,8 @@ test('renew and display successor history', async ({ page }) => {
   await page.goto('/')
   await page.getByLabel('Policy reference').fill(policy.reference)
   await page.getByRole('button', { name: 'Find policy' }).click()
-  await page.getByRole('button', { name: 'Renew term' }).click()
+  await page.getByRole('button', { name: 'Record automatic renewal' }).click()
 
   await expect(page.getByText('Term 2')).toBeVisible()
-  await expect(page.getByText('2027-10-01 → 2028-09-30')).toBeVisible()
+  await expect(page.getByText('2026-10-13 → 2027-10-12')).toBeVisible()
 })

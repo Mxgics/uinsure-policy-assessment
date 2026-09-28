@@ -107,3 +107,18 @@ Earlier PR sections preserve their original observations. Current review and del
 - Owner requested simpler branching. Refactored backend exception mapping to a pattern switch/shared response write and extracted frontend recovery into a helper with conflict-first guards and an operation switch. Preserved messages, response contracts, recovery precedence and finally cleanup.
 - Added HTTP 500 characterization for sale/renewal/cancellation and verified it passed before production changes. This is refactoring under passing tests, not a fabricated red/green cycle.
 - Executed final local gates: 38 domain, 72 API/SQL, 18 frontend, 10 mocked-browser and 8 real full-stack tests passed; Release build had zero warnings/errors. Current-head CI and owner review remain separate gates.
+
+## Delivery stage 9 — demo usability
+
+- Task: add repeatable local renewal/cancellation data, full holder authoring, age-aware controls and clearer automatic/manual renewal behaviour.
+- Assistance: traced the existing domain/API/SQL/UI paths, clarified initial Cheque and explicit-renewal decisions with the owner, wrote a failing domain regression, implemented an opt-in transactional seeder and expanded component/browser evidence.
+- Corrections: changed an initial direct-aggregate seeder test to use the real API orchestration after it hit concurrency handling outside the production path; collapsed the rendered demo grid after mobile visual inspection showed unnecessary page length.
+- Evidence: the maintained backend gate passed 40 domain and 75 real SQL tests with a zero-warning Release build, including failed-seed rollback; the frontend build, 23 frontend tests, 12 intercepted desktop/mobile Chromium checks and eight real browser/API/SQL journeys passed. Rendered captures were inspected. Final documentation checks remain separately recorded.
+- Boundary: synthetic data only; no seed endpoint, scheduled renewal, response/schema change, migration, merge or external submission.
+
+## Final submission preparation — 2026-09-28
+
+- Owner direction: manual testing is complete and satisfactory; prepare the entire repository and publish a focused PR, then stop before merging.
+- Assistance: reviewed the candidate diff, setup scripts, CI and handover documents; rewrote the README, aligned current status, corrected the change-index table and inaccurate manual procedures, and kept historical evidence distinct.
+- Correction: reproduced seven mocked UI failures with a future test clock, then fixed the component/browser harness to use the historical fixture date. Application behaviour, API contracts and real full-stack clocks are unchanged.
+- Verification: frontend build, 23 component/API-boundary tests and 12 intercepted browser checks passed after the harness correction. Repository-audit evidence is recorded in the test plan; exact-head publication CI is tracked in the final PR. No manual walkthrough was repeated and no merge or external submission is authorized.
