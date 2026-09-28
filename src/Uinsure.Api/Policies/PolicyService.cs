@@ -135,13 +135,13 @@ public sealed class PolicyService(
         return MapTerm(successor, DateOnly.FromDateTime(now.UtcDateTime));
     }
 
+    // Only the named invariant collision is an expected race; unrelated SQL failures must remain 500s.
     private static bool IsCancellationConstraintConflict(DbUpdateException exception) =>
-        // Only the named invariant collision is an expected race; unrelated SQL failures must remain 500s.
         exception.InnerException is SqlException { Number: 2601 or 2627 } sqlException &&
         sqlException.Message.Contains("IX_Cancellations_PolicyTermId", StringComparison.Ordinal);
 
+    // Only the named invariant collision is an expected race; unrelated SQL failures must remain 500s.
     private static bool IsRenewalConstraintConflict(DbUpdateException exception) =>
-        // Only the named invariant collision is an expected race; unrelated SQL failures must remain 500s.
         exception.InnerException is SqlException { Number: 2601 or 2627 } sqlException &&
         sqlException.Message.Contains("IX_PolicyTerms_PredecessorTermId", StringComparison.Ordinal);
 
